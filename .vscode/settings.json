@@ -1,0 +1,8 @@
+{
+    "ansible.ansibleNavigator.path": "$HOME/Library/Python/3.9/bin/ansible-navigator",
+    "ansible.python.interpreterPath": "/usr/bin/python3",
+    "ansible.validation.lint.enabled": true,
+    "ansible.validation.enabled": false,
+    "ansible.executionEnvironment.enabled": true,
+    "ansible.executionEnvironment.containerEngine": "docker"
+}

@@ -1,0 +1,162 @@
+
+# Vamos a montar un playbook, 
+# cuya misión es dar de alta o no... 
+# o modificar mi archivo known_hosts 
+# (el de la máquina/entorno donde se ejecute el playbook)
+#  con la clave del servidor al que me quiero conectar.
+
+- hosts:        all       # Con esto la primera limitación de los hosts sobre los que este playbook puede ser ejecutado
+                          # La limitación real se da al EJECUTAR EL PLAYBOOK --limit
+  gather_facts: false     # Aquí siempre a false. Por la naturaleza del playbook que estamos montando
+                          # Si pongo esto a true, ya se va a intentar conectar por ssh... 
+                          # y si no está dado de al alta en el known_hosts falla!
+
+  vars:
+    appendAllToKnownHostsIfNotExists:  false       # Si está a true, y la máquina no está 
+                                                   # previamente dada de alta en el known_hosts, que la añada.
+    updateAllKnownHostsIfExists:       false       # Si está a true, y la máquina ya está dada de alta en el 
+                                                   # known_hosts con otra clave, que la actualice.
+                                    # Los valores por defecto, me deben permitir ejecutar el playbook
+                                    # sin necesidad de pasar información adicional.
+                                    # Pero no deben de hacer nada, si no se les pasa información adicional.
+                                    # Lo que queremos evitar son errores humanos.
+    newAllowedHosts: []             # Los hosts a los que se les doy de alta en el known_hosts caso de ser necesario
+                                    # aunque la variable appendToKnownHostsIfNotExists esté a false
+    allowedUpdateHosts: []          # Los hosts a los que se les va a actualizar la clave en el known_hosts
+                                    # Siempre y cuando la variable updateKnownHostsIfExists esté a true
+    logChangedHosts: true           # Escribo por ahí (en stdout) que un host ha cambiado
+    logNewHosts:     true           # Escribo por ahí (en stdout) que un host es nuevo
+        # 3 valores más adelante: NO, INFO, ERROR
+# ssh-keygen -F HOST
+#    Si no existe el archivo o el servidor no está dado de alta, sale con código de salida de error <> 0
+#    Si existe, en salida estándar saca las claves registradas (junto con lineas de comentarios) y código de salida 0
+
+# ssh-keygen -R HOST
+#     Borra lo que hay en el fichero known_hosts para ese host y sale con código de salida 0
+#     Si no existe, también sale con código de salida 0
+
+# ssh-keyscan -H HOST
+#     Se genera por stdout las claves que hay que dar de alta en el known_hosts y acaba con 0
+#     Si no se reconoce la máquina sale con código de error
+
+  pre_tasks:
+    -   name:       Asegurar que existe el archivo known_hosts en el entorno local
+        #ansible.builtin.file:
+        #    path:   ~/.ssh/known_hosts
+        #    mode:   '0644'
+        #    state:  'File'
+        delegate_to: localhost
+        run_once: true
+        tags:
+            - knownhosts
+
+    -   name:       Extraer la clave dada de alta en el known_hosts para el host remoto
+        #shell:
+            #cmd:    ssh-keygen -F HOST
+        register:   tarea_clave_registrada
+        delegate_to: localhost
+        tags:
+            - knownhosts
+
+    -   name:       Calcular la clave que le corresponde actualmente al host remoto
+        register:   tarea_clave_actual
+        delegate_to: localhost
+        tags:
+            - knownhosts
+
+    -   name:       Mostrar las claves registradas y actuales para el host remoto
+        debug:
+        # modulo:
+            # tarea_clave_actual
+            # tarea_clave_registrada
+        tags: 
+            - debug
+
+  tasks:
+
+    -   name:       Notificar al logger que hay un host nuevo
+        #modulo:
+        changed_when: true
+        notify:     NUEVO_HOST
+        tags:
+            - always
+        when: 
+            - "" # Si no hay clave guardada en nuestro archivo known_hosts
+                 # tarea_clave_registrada
+            - logNewHosts
+
+    -   name:       Notificar al logger que hay un host que ha cambiado
+        #modulo:
+        changed_when: true
+        notify:     HOST_CAMBIADO
+        tags:
+            - always
+        when: 
+            - "" # Si hay clave en nuestro fichero
+                 # tarea_clave_registrada
+            - "" # Si ha cambiado (comparando la que hay, con la que hemos calculado actualmente para el host)
+                 # tarea_clave_actual tarea_clave_registrada
+            - logChangedHosts
+
+    -   name:       Escribir la clave actual del host remoto en el fichero known_hosts
+        # modulo:
+            # tarea_clave_actual
+        delegate_to: localhost
+        tags:
+            - knownhosts
+        when: 
+            - "" # Si no hay clave guardada en nuestro archivo known_hosts
+                 # tarea_clave_registrada
+            - "" # Si las variables lo permiten
+
+    -   name:       Asegurar que se actualice la clave del host remoto en caso de ser necesario y permitido
+        block:
+            - name: Borro la clave que hay guardada para el host remoto ahora mismo en el known_hosts
+              delegate_to: localhost
+            - name: Escribir la nueva clave del host remoto en el fichero known_hosts
+              # modulo:
+                    # tarea_clave_actual
+              delegate_to: localhost
+        tags:
+            - knownhosts
+        when: 
+            - "" # Si hay clave en nuestro fichero
+                 # tarea_clave_registrada
+            - "" # Si ha cambiado (comparando la que hay, con la que hemos calculado actualmente para el host)
+                 # tarea_clave_actual tarea_clave_registrada
+            - "" # Si las variables lo permiten 
+
+  post_tasks:
+    -   name:       Mostrar cómo ha quedado el archivo known_hosts
+        tags: 
+            - debug # Se ejecutaría si no piden tags concretos
+                    # Si me limitan solo al tag knownhosts? NO
+                    # Si excluyen el tag debug? NO
+
+    -   name:       Comprobar que puedo conectarme al host remoto
+        tags: 
+            - never # A no ser que explícitamente me pidan test, no se ejecuta
+            - test
+
+  handlers:
+    - name:         Loguear si un host es nuevo y no está registrado
+      listen:       NUEVO_HOST
+    - name:         Loguear si un host ha cambiado de clave
+      listen:       HOST_MODIFICADO
+
+
+# Por desgracia, en este caso vamos a tirar mucho del módulo shell... que tiene escondida una jodienda!
+# El módulo shell siempre pone la tarea como changed.
+# Pero aún no siendo así, hay una pregunta que me tengo que hacer siempre que creo un playbook.
+# (En este caso, por usar el shell especialmente)
+# ¿Cuándo quiero que una tarea se marque como changed?
+# Qué tarea de este playbook debería acabar en estado changed? Si es que hay alguna!
+# Para que se usa el estado changed? Para identificar cambios en el sistema....
+#     En qué sistema?  En el 99% de los casos en el remoto!
+# Conceptualmente a priori no se me ocurre que el añadir la máquina remota al known host en local para poder 
+# conectarme con ella sea en ningún caso considerado un cambio!
+# Lo cuál no significa que en un caso de uso que no estoy contemplando pueda ser interesante.
+# podría crearme una variable! markAsChanged: true / false
+# Otra opción que podría utilizar es generar un mensaje de log claro
+# logChangedHosts
+# logNewHosts
