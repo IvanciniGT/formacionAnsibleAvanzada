@@ -10,23 +10,35 @@
   gather_facts: false     # Aquí siempre a false. Por la naturaleza del playbook que estamos montando
                           # Si pongo esto a true, ya se va a intentar conectar por ssh... 
                           # y si no está dado de al alta en el known_hosts falla!
-
+ # ansible-playbook -i inventario.ini playbook.yaml -e 'knownHostsFile={}'
   vars:
-    appendAllToKnownHostsIfNotExists:  false       # Si está a true, y la máquina no está 
-                                                   # previamente dada de alta en el known_hosts, que la añada.
-    updateAllKnownHostsIfExists:       false       # Si está a true, y la máquina ya está dada de alta en el 
-                                                   # known_hosts con otra clave, que la actualice.
-                                    # Los valores por defecto, me deben permitir ejecutar el playbook
-                                    # sin necesidad de pasar información adicional.
-                                    # Pero no deben de hacer nada, si no se les pasa información adicional.
-                                    # Lo que queremos evitar son errores humanos.
-    newAllowedHosts: []             # Los hosts a los que se les doy de alta en el known_hosts caso de ser necesario
-                                    # aunque la variable appendToKnownHostsIfNotExists esté a false
-    allowedUpdateHosts: []          # Los hosts a los que se les va a actualizar la clave en el known_hosts
-                                    # Siempre y cuando la variable updateKnownHostsIfExists esté a true
-    logChangedHosts: true           # Escribo por ahí (en stdout) que un host ha cambiado
-    logNewHosts:     true           # Escribo por ahí (en stdout) que un host es nuevo
-        # 3 valores más adelante: NO, INFO, ERROR
+    knownHostsFile:
+        algorithm:                  'ed25519'
+        new:
+            appendAutomatically:    true
+            limitedTo:              ~               # Sea una lista, si quiero limitar, o null(undefined) si no quiero limitar.
+            log:                    true
+            notifyChange:           true
+        updated:
+            updateAutomatically:    true
+            limitedTo:              ~
+            log:                    true
+            notifyChange:           true
+
+
+    defaultKnownHostsFile:
+        algorithm:                  ecdsa       #ed25519
+        new:
+            appendAutomatically:    true
+            limitedTo:              ~               # Sea una lista, si quiero limitar, o null(undefined) si no quiero limitar.
+            log:                    true
+            notifyChange:           true
+        updated:
+            updateAutomatically:    true
+            limitedTo:              ~
+            log:                    true
+            notifyChange:           true
+
 # ssh-keygen -F HOST
 #    Si no existe el archivo o el servidor no está dado de alta, sale con código de salida de error <> 0
 #    Si existe, en salida estándar saca las claves registradas (junto con lineas de comentarios) y código de salida 0
@@ -39,38 +51,79 @@
 #     Se genera por stdout las claves que hay que dar de alta en el known_hosts y acaba con 0
 #     Si no se reconoce la máquina sale con código de error
 
+#   inventory_hostname      <<< el nombre que pongo en el inventario al host
+#   ansible_host            <<< Es el que se usa por parte de Ansible para las conexiones SSH
+
+
+#{{ defaltKnownHostsFile.algorithm if not (knownHostsFile is defined and knownHostsFile.algorithm ) else (knownHostsFile|default(defaltKnownHostsFile)).algorithm }}
   pre_tasks:
-    -   name:       Asegurar que existe el archivo known_hosts en el entorno local
-        #ansible.builtin.file:
-        #    path:   ~/.ssh/known_hosts
-        #    mode:   '0644'
-        #    state:  'File'
-        delegate_to: localhost
-        run_once: true
-        tags:
-            - knownhosts
 
-    -   name:       Extraer la clave dada de alta en el known_hosts para el host remoto
-        #shell:
-            #cmd:    ssh-keygen -F HOST
-        register:   tarea_clave_registrada
-        delegate_to: localhost
-        tags:
-            - knownhosts
+    -   name:                   Aplico los valores por defecto a los datos no suministrados
+        ansible.builtin.set_fact:
+            knownHosts: |
+                                {{ defaultKnownHostsFile | combine(knownHostsFile, recursive = true) }}
+            algoritmo:  |
+                                {{ knownHosts.algorithm if knownHosts.algorithm else defaultKnownHostsFile.algorithm }}
+        # El módulo set_fact, igual que el módulo debug se ejecutan por defecto en local.
+        # No necesito poner un delegate_to: localhost
 
-    -   name:       Calcular la clave que le corresponde actualmente al host remoto
-        register:   tarea_clave_actual
-        delegate_to: localhost
+    -   name:                   Asegurar que existe el archivo known_hosts en el entorno local
+        ansible.builtin.file:
+            path:               ~/.ssh/known_hosts
+            mode:               '0644'
+            state:              'File'
+        delegate_to:            localhost
+        run_once:               true
+        changed_when:           false
         tags:
-            - knownhosts
+                - knownhosts
+
+    -   name:                   Extraer la clave dada de alta en el fichero known_hosts para el host remoto
+        ansible.builtin.shell:
+            cmd: >-
+                                ssh-keygen -F {{ ansible_host }} 
+                                    | egrep ^[^#] 
+                                    | grep {{ algoritmo }}
+        register:               tarea_clave_registrada
+        delegate_to:            localhost
+        changed_when:           false
+        tags:
+                - knownhosts
+
+    -   name:                   Obtener la clave que le corresponde actualmente al host remoto
+        ansible.builtin.shell:
+            cmd: >-
+                                ssh-keyscan -H {{ ansible_host }} 2>&1
+                                    | egrep ^[^#] 
+                                    | grep {{ algoritmo }}
+        register:               tarea_clave_actual
+        delegate_to:            localhost
+        changed_when:           false
+        tags:
+                - knownhosts
+
+    -   name:                   Detener el playbook con error si no he sido capaz de obtener la clave para el algoritmo suministrado
+        #ansible.builtin.fail:
+        #    msg:                No se ha conseguido generar ninguna clave para el algoritmo suministrado
+        # El fail, el problema es que seguiría intentándolo para cada host... Y falla en cada uno de ellos. 
+        # Si para uno no hemos conseguido generar la clave en el algoritmo suministrado, ya sabemos que para NINGUNO lo conseguiremos.
+        # No tiene sentido seguir intentándolo. Mejor abortar la ejecución del play directamente
+        meta:                   end_play    # end_play no genera fallo
+        failed_when:            true
+        when:
+                              - tarea_clave_actual.rc != 0
+        tags:
+                - knownhosts
 
     -   name:       Mostrar las claves registradas y actuales para el host remoto
         debug:
-        # modulo:
-            # tarea_clave_actual
-            # tarea_clave_registrada
+            msg: |
+                    Algoritmo utilizado: {{ algoritmo }}
+                    Claves:
+                    - registrada:        {{ tarea_clave_actual.stdout | trim }}
+                    - actual:            {{ tarea_clave_actual.stdout | trim }}
         tags: 
-            - debug
+                - debug
 
   tasks:
 
@@ -160,3 +213,5 @@
 # Otra opción que podría utilizar es generar un mensaje de log claro
 # logChangedHosts
 # logNewHosts
+
+
