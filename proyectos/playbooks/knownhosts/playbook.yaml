@@ -43,6 +43,7 @@
 
     -   name:                   Asegurar que los datos que nos suministran son correctos
         block:
+        
         -   name:                 Asegurar que se ha suministrado un valor correcto en knownHosts.new.limitedTo
             ansible.builtin.assert:
                 that:
@@ -58,6 +59,7 @@
                 fail_msg:           La propiedad `knownHosts.updated.limitedTo` debe ser un listado de los servidores admitidos (textos)
                 quiet:              true # No genere log
             run_once:               true
+        
         tags:
             - always
 
@@ -120,6 +122,7 @@
 
     -   name:               Nuevo host identificado
         block:
+        
         -   name:               Informar del nuevo host identificado
             ansible.builtin.debug:
                 msg: |
@@ -140,6 +143,7 @@
             when: 
                 -               knownHosts.new.appendAutomatically
                 -               (true if knownHosts.new.limitedTo is none else ( (inventory_hostname in knownHosts.new.limitedTo) or (ansible_host in knownHosts.new.limitedTo) ))
+        
         when: 
                 -               tarea_clave_registrada.rc != 0 # Si no hay clave guardada en nuestro archivo known_hosts
         tags:
@@ -148,6 +152,7 @@
 
     -   name:               Cambio identificado en host existente
         block:
+
         -   name:               Informar del cambio identificado en el host
             ansible.builtin.debug:
                 msg: |
@@ -180,6 +185,7 @@
             when: 
                 -               knownHosts.updated.updateAutomatically
                 -               (true if knownHosts.updated.limitedTo is none else ( (inventory_hostname in knownHosts.updated.limitedTo) or (ansible_host in knownHosts.updated.limitedTo) ))
+        
         when: 
                 -               tarea_clave_registrada.rc == 0 
                 -               tarea_clave_registrada.stdout != tarea_clave_actual.stdout
@@ -188,12 +194,21 @@
 
 
   post_tasks:
-    -   name:                   Mostrar cómo ha quedado el archivo known_hosts
+
+    -   name:                   Capturar contenido del fichero known_hosts
         ansible.builtin.shell:
             cmd: >-
                                 cat ~/.ssh/known_hosts
         changed_when:           false
         delegate_to:            localhost
+        register:               contenido_fichero_knownhosts
+        tags: 
+            - debug 
+
+    -   name:                   Mostrar cómo ha quedado el archivo known_hosts
+        ansible.builtin.debug:
+            var:                contenido_fichero_knownhosts.stdout
+                                cat ~/.ssh/known_hosts
         tags: 
             - debug 
 
