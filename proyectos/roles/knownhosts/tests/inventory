@@ -1,2 +1,2 @@
-localhost
+remoto ansible_connection=ssh ansible_host=localhost
 

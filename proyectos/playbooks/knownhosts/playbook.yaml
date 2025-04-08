@@ -5,7 +5,7 @@
                           # Si pongo esto a true, ya se va a intentar conectar por ssh... 
                           # y si no está dado de al alta en el known_hosts falla!
 
-  vars:
+  vars: # constantes | valores por defecto de variables que quiera que me suministren por consola
     #knownHostsFile: {} 
 
     defaultKnownHostsFile:

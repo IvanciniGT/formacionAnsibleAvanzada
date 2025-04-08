@@ -1,2 +1,18 @@
 ---
-# defaults file for knownhosts
+# variables que quiero que los usuarios puedan suministrar
+# LAs variables aquí definidas tienen una prioridad muy baja... pueden ser fácilmente sobreescritas.
+
+knownHostsFile:
+    algorithm:                  ecdsa       #ed25519
+    new:
+        appendAutomatically:    false
+        limitedTo:              ~               # Sea una lista, si quiero limitar, o null(undefined) si no quiero limitar.
+        logHost:                true
+        notifyChange:           false
+        failHost:               false
+    updated:
+        updateAutomatically:    false
+        limitedTo:              ~
+        logHost:                true
+        notifyChange:           false
+        failHost:               false

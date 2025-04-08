@@ -1,2 +1,15 @@
 ---
 # handlers file for knownhosts
+
+- name:                     Detener la ejecución del playbook si el servidor se identifica
+  ansible.builtin.fail:
+    msg:                    Host no identificado. Deteniendo la ejecución.
+  listen:                   NUEVO_HOST
+  tags:
+        - knownhosts
+- name:                     Loguear si un host ha cambiado de clave
+  ansible.builtin.fail:
+    msg:                    Cambio identificado en host existente. Deteniendo la ejecución.
+  listen:                   HOST_MODIFICADO
+  tags:
+        - knownhosts

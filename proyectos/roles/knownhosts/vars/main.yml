@@ -1,2 +1,18 @@
 ---
-# vars file for knownhosts
+# constantes
+# Estas tienen mucha prioridad... no son fácilmente sobreescribibles desde el exterior... Las uso internamente: CONSTANTES
+
+defaultKnownHostsFile:
+    algorithm:                  ecdsa       #ed25519
+    new:
+        appendAutomatically:    true
+        limitedTo:              ~               # Sea una lista, si quiero limitar, o null(undefined) si no quiero limitar.
+        logHost:                true
+        notifyChange:           true
+        failHost:               true
+    updated:
+        updateAutomatically:    true
+        limitedTo:              ~
+        logHost:                true
+        notifyChange:           true
+        failHost:               true
