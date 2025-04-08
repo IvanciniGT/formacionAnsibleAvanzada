@@ -34,7 +34,7 @@
 
     -   name:                   Extraemos el algoritmo a usar
         ansible.builtin.set_fact:
-            algoritmo:  |
+            algoritmo:  |-
                                 {{ knownHosts.algorithm if knownHosts.algorithm else defaultKnownHostsFile.algorithm }}
         # El módulo set_fact, igual que el módulo debug se ejecutan por defecto en local.
         # No necesito poner un delegate_to: localhost
@@ -77,7 +77,7 @@
     -   name:                   Extraer la clave dada de alta en el fichero known_hosts para el host remoto
         ansible.builtin.shell:
             cmd: >-
-                                ssh-keygen -F {{ ansible_host }} | egrep ^[^#] | grep {{ algoritmo }}
+                                ssh-keygen -F {{ ansible_host }} | egrep ^[^#] | egrep -o "{{ algoritmo }}.*"
         register:               tarea_clave_registrada
         delegate_to:            localhost
         changed_when:           false
@@ -88,7 +88,7 @@
     -   name:                   Obtener la clave que le corresponde actualmente al host remoto
         ansible.builtin.shell:
             cmd: >-
-                                ssh-keyscan -H {{ ansible_host }} 2>&1 | egrep ^[^#] | grep {{ algoritmo }}
+                                ssh-keyscan -H {{ ansible_host }} 2>&1 | egrep ^[^#] | egrep -o "{{ algoritmo }}.*"
         register:               tarea_clave_actual
         delegate_to:            localhost
         changed_when:           false
@@ -137,7 +137,7 @@
         -   name:               Escribir la clave actual del host remoto en el fichero known_hosts
             ansible.builtin.shell:
                 cmd: >          
-                                echo "{{ tarea_clave_actual.stdout }}" >> ~/.ssh/known_hosts
+                                ssh-keyscan -H {{ ansible_host }} 2>&1 | egrep ^[^#]  >> ~/.ssh/known_hosts
             changed_when:       knownHosts.new.notifyChange == true
             delegate_to:        localhost
             when: 
@@ -208,7 +208,6 @@
     -   name:                   Mostrar cómo ha quedado el archivo known_hosts
         ansible.builtin.debug:
             var:                contenido_fichero_knownhosts.stdout
-                                cat ~/.ssh/known_hosts
         tags: 
             - debug 
 
