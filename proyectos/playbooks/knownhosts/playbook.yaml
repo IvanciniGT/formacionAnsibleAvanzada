@@ -13,20 +13,27 @@
         new:
             appendAutomatically:    true
             limitedTo:              ~               # Sea una lista, si quiero limitar, o null(undefined) si no quiero limitar.
-            log:                    true
+            logHost:                true
             notifyChange:           true
+            failHost:               true
         updated:
             updateAutomatically:    true
             limitedTo:              ~
-            log:                    true
+            logHost:                true
             notifyChange:           true
+            failHost:               true
 
   pre_tasks:
 
     -   name:                   Aplico los valores por defecto a los datos no suministrados
         ansible.builtin.set_fact:
             knownHosts: |
-                                {{ defaultKnownHostsFile | combine(knownHostsFile, recursive = true) }}
+                                {{ defaultKnownHostsFile | combine(knownHostsFile | default({}), recursive = true) }}
+        tags:
+            - always
+
+    -   name:                   Extraemos el algoritmo a usar
+        ansible.builtin.set_fact:
             algoritmo:  |
                                 {{ knownHosts.algorithm if knownHosts.algorithm else defaultKnownHostsFile.algorithm }}
         # El módulo set_fact, igual que el módulo debug se ejecutan por defecto en local.
@@ -39,7 +46,7 @@
         -   name:                 Asegurar que se ha suministrado un valor correcto en knownHosts.new.limitedTo
             ansible.builtin.assert:
                 that:
-                    -               knownHosts.new.limitedTo is None or knownHosts.new.limitedTo is iterable
+                    -               knownHosts.new.limitedTo is none or knownHosts.new.limitedTo is iterable
                 fail_msg:           La propiedad `knownHosts.new.limitedTo` debe ser un listado de los servidores admitidos (textos)
                 quiet:              true # No genere log
             run_once:               true
@@ -47,7 +54,7 @@
         -   name:                   Asegurar que se ha suministrado un valor correcto en knownHosts.updated.limitedTo
             ansible.builtin.assert:
                 that:
-                    -               knownHosts.updated.limitedTo is None or knownHosts.updated.limitedTo is iterable
+                    -               knownHosts.updated.limitedTo is none or knownHosts.updated.limitedTo is iterable
                 fail_msg:           La propiedad `knownHosts.updated.limitedTo` debe ser un listado de los servidores admitidos (textos)
                 quiet:              true # No genere log
             run_once:               true
@@ -58,7 +65,7 @@
         ansible.builtin.file:
             path:               ~/.ssh/known_hosts
             mode:               '0644'
-            state:              'File'
+            state:              'file'
         delegate_to:            localhost
         run_once:               true
         changed_when:           false
@@ -68,21 +75,18 @@
     -   name:                   Extraer la clave dada de alta en el fichero known_hosts para el host remoto
         ansible.builtin.shell:
             cmd: >-
-                                ssh-keygen -F {{ ansible_host }} 
-                                    | egrep ^[^#] 
-                                    | grep {{ algoritmo }}
+                                ssh-keygen -F {{ ansible_host }} | egrep ^[^#] | grep {{ algoritmo }}
         register:               tarea_clave_registrada
         delegate_to:            localhost
         changed_when:           false
+        failed_when:            false
         tags:
                 - knownhosts
 
     -   name:                   Obtener la clave que le corresponde actualmente al host remoto
         ansible.builtin.shell:
             cmd: >-
-                                ssh-keyscan -H {{ ansible_host }} 2>&1
-                                    | egrep ^[^#] 
-                                    | grep {{ algoritmo }}
+                                ssh-keyscan -H {{ ansible_host }} 2>&1 | egrep ^[^#] | grep {{ algoritmo }}
         register:               tarea_clave_actual
         delegate_to:            localhost
         changed_when:           false
@@ -131,11 +135,11 @@
             ansible.builtin.shell:
                 cmd: >          
                                 echo "{{ tarea_clave_actual.stdout }}" >> ~/.ssh/known_hosts
-            changed_when:       knownHosts.new.notifyChange if knownHosts.new.notifyChange else defaultKnownHostsFile.new.notifyChange
+            changed_when:       knownHosts.new.notifyChange == true
             delegate_to:        localhost
             when: 
-                -               knownHosts.new.appendAutomatically if knownHosts.new.appendAutomatically else defaultKnownHostsFile.new.appendAutomatically
-                -               true if knownHosts.new.limitedTo is None else ( (inventory_hostname in knownHosts.new.limitedTo) or (ansible_host in knownHosts.new.limitedTo) )
+                -               knownHosts.new.appendAutomatically
+                -               (true if knownHosts.new.limitedTo is none else ( (inventory_hostname in knownHosts.new.limitedTo) or (ansible_host in knownHosts.new.limitedTo) ))
         when: 
                 -               tarea_clave_registrada.rc != 0 # Si no hay clave guardada en nuestro archivo known_hosts
         tags:
@@ -171,11 +175,11 @@
                 ansible.builtin.shell:
                     cmd: >          
                                 echo "{{ tarea_clave_actual.stdout }}" >> ~/.ssh/known_hosts
-                changed_when:   knownHosts.updated.notifyChange if knownHosts.updated.notifyChange else defaultKnownHostsFile.updated.notifyChange
+                changed_when:   knownHosts.updated.notifyChange == true
                 delegate_to:    localhost
             when: 
-                -               knownHosts.updated.appendAutomatically if knownHosts.updated.appendAutomatically else defaultKnownHostsFile.updated.appendAutomatically
-                -               true if knownHosts.updated.limitedTo is None else ( (inventory_hostname in knownHosts.updated.limitedTo) or (ansible_host in knownHosts.updated.limitedTo) )
+                -               knownHosts.updated.updateAutomatically
+                -               (true if knownHosts.updated.limitedTo is none else ( (inventory_hostname in knownHosts.updated.limitedTo) or (ansible_host in knownHosts.updated.limitedTo) ))
         when: 
                 -               tarea_clave_registrada.rc == 0 
                 -               tarea_clave_registrada.stdout != tarea_clave_actual.stdout
