@@ -1,30 +1,12 @@
 
-# Vamos a montar un playbook, 
-# cuya misión es dar de alta o no... 
-# o modificar mi archivo known_hosts 
-# (el de la máquina/entorno donde se ejecute el playbook)
-#  con la clave del servidor al que me quiero conectar.
-
 - hosts:        all       # Con esto la primera limitación de los hosts sobre los que este playbook puede ser ejecutado
                           # La limitación real se da al EJECUTAR EL PLAYBOOK --limit
   gather_facts: false     # Aquí siempre a false. Por la naturaleza del playbook que estamos montando
                           # Si pongo esto a true, ya se va a intentar conectar por ssh... 
                           # y si no está dado de al alta en el known_hosts falla!
- # ansible-playbook -i inventario.ini playbook.yaml -e 'knownHostsFile={}'
-  vars:
-    knownHostsFile:
-        algorithm:                  'ed25519'
-        new:
-            appendAutomatically:    true
-            limitedTo:              ~               # Sea una lista, si quiero limitar, o null(undefined) si no quiero limitar.
-            log:                    true
-            notifyChange:           true
-        updated:
-            updateAutomatically:    true
-            limitedTo:              ~
-            log:                    true
-            notifyChange:           true
 
+  vars:
+    #knownHostsFile: {} 
 
     defaultKnownHostsFile:
         algorithm:                  ecdsa       #ed25519
@@ -39,23 +21,6 @@
             log:                    true
             notifyChange:           true
 
-# ssh-keygen -F HOST
-#    Si no existe el archivo o el servidor no está dado de alta, sale con código de salida de error <> 0
-#    Si existe, en salida estándar saca las claves registradas (junto con lineas de comentarios) y código de salida 0
-
-# ssh-keygen -R HOST
-#     Borra lo que hay en el fichero known_hosts para ese host y sale con código de salida 0
-#     Si no existe, también sale con código de salida 0
-
-# ssh-keyscan -H HOST
-#     Se genera por stdout las claves que hay que dar de alta en el known_hosts y acaba con 0
-#     Si no se reconoce la máquina sale con código de error
-
-#   inventory_hostname      <<< el nombre que pongo en el inventario al host
-#   ansible_host            <<< Es el que se usa por parte de Ansible para las conexiones SSH
-
-
-#{{ defaltKnownHostsFile.algorithm if not (knownHostsFile is defined and knownHostsFile.algorithm ) else (knownHostsFile|default(defaltKnownHostsFile)).algorithm }}
   pre_tasks:
 
     -   name:                   Aplico los valores por defecto a los datos no suministrados
@@ -66,6 +31,28 @@
                                 {{ knownHosts.algorithm if knownHosts.algorithm else defaultKnownHostsFile.algorithm }}
         # El módulo set_fact, igual que el módulo debug se ejecutan por defecto en local.
         # No necesito poner un delegate_to: localhost
+        tags:
+            - always
+
+    -   name:                   Asegurar que los datos que nos suministran son correctos
+        block:
+        -   name:                 Asegurar que se ha suministrado un valor correcto en knownHosts.new.limitedTo
+            ansible.builtin.assert:
+                that:
+                    -               knownHosts.new.limitedTo is None or knownHosts.new.limitedTo is iterable
+                fail_msg:           La propiedad `knownHosts.new.limitedTo` debe ser un listado de los servidores admitidos (textos)
+                quiet:              true # No genere log
+            run_once:               true
+
+        -   name:                   Asegurar que se ha suministrado un valor correcto en knownHosts.updated.limitedTo
+            ansible.builtin.assert:
+                that:
+                    -               knownHosts.updated.limitedTo is None or knownHosts.updated.limitedTo is iterable
+                fail_msg:           La propiedad `knownHosts.updated.limitedTo` debe ser un listado de los servidores admitidos (textos)
+                quiet:              true # No genere log
+            run_once:               true
+        tags:
+            - always
 
     -   name:                   Asegurar que existe el archivo known_hosts en el entorno local
         ansible.builtin.file:
@@ -108,7 +95,7 @@
         # El fail, el problema es que seguiría intentándolo para cada host... Y falla en cada uno de ellos. 
         # Si para uno no hemos conseguido generar la clave en el algoritmo suministrado, ya sabemos que para NINGUNO lo conseguiremos.
         # No tiene sentido seguir intentándolo. Mejor abortar la ejecución del play directamente
-        meta:                   end_play    # end_play no genera fallo
+        ansible.builtin.meta:   end_play    # end_play no genera fallo
         failed_when:            true
         when:
                               - tarea_clave_actual.rc != 0
@@ -116,102 +103,116 @@
                 - knownhosts
 
     -   name:       Mostrar las claves registradas y actuales para el host remoto
-        debug:
+        ansible.builtin.debug:
             msg: |
                     Algoritmo utilizado: {{ algoritmo }}
                     Claves:
-                    - registrada:        {{ tarea_clave_actual.stdout | trim }}
+                    - registrada:        {{ tarea_clave_registrada.stdout | trim }}
                     - actual:            {{ tarea_clave_actual.stdout | trim }}
         tags: 
                 - debug
 
   tasks:
 
-    -   name:       Notificar al logger que hay un host nuevo
-        #modulo:
-        changed_when: true
-        notify:     NUEVO_HOST
-        tags:
-            - always
-        when: 
-            - "" # Si no hay clave guardada en nuestro archivo known_hosts
-                 # tarea_clave_registrada
-            - logNewHosts
-
-    -   name:       Notificar al logger que hay un host que ha cambiado
-        #modulo:
-        changed_when: true
-        notify:     HOST_CAMBIADO
-        tags:
-            - always
-        when: 
-            - "" # Si hay clave en nuestro fichero
-                 # tarea_clave_registrada
-            - "" # Si ha cambiado (comparando la que hay, con la que hemos calculado actualmente para el host)
-                 # tarea_clave_actual tarea_clave_registrada
-            - logChangedHosts
-
-    -   name:       Escribir la clave actual del host remoto en el fichero known_hosts
-        # modulo:
-            # tarea_clave_actual
-        delegate_to: localhost
-        tags:
-            - knownhosts
-        when: 
-            - "" # Si no hay clave guardada en nuestro archivo known_hosts
-                 # tarea_clave_registrada
-            - "" # Si las variables lo permiten
-
-    -   name:       Asegurar que se actualice la clave del host remoto en caso de ser necesario y permitido
+    -   name:               Nuevo host identificado
         block:
-            - name: Borro la clave que hay guardada para el host remoto ahora mismo en el known_hosts
-              delegate_to: localhost
-            - name: Escribir la nueva clave del host remoto en el fichero known_hosts
-              # modulo:
-                    # tarea_clave_actual
-              delegate_to: localhost
+        -   name:               Informar del nuevo host identificado
+            ansible.builtin.debug:
+                msg: |
+                                Nuevo host identificado, que no está registrado en el fichero known_hosts:
+                                - Inventory hostname:   {{ inventory_hostname }}
+                                - Ansible host:         {{ ansible_host }}
+            changed_when:       knownHosts.new.failHost
+            notify:             NUEVO_HOST
+            when: 
+                -               knownHosts.new.logHost or knownHosts.new.failHost
+
+        -   name:               Escribir la clave actual del host remoto en el fichero known_hosts
+            ansible.builtin.shell:
+                cmd: >          
+                                echo "{{ tarea_clave_actual.stdout }}" >> ~/.ssh/known_hosts
+            changed_when:       knownHosts.new.notifyChange if knownHosts.new.notifyChange else defaultKnownHostsFile.new.notifyChange
+            delegate_to:        localhost
+            when: 
+                -               knownHosts.new.appendAutomatically if knownHosts.new.appendAutomatically else defaultKnownHostsFile.new.appendAutomatically
+                -               true if knownHosts.new.limitedTo is None else ( (inventory_hostname in knownHosts.new.limitedTo) or (ansible_host in knownHosts.new.limitedTo) )
+        when: 
+                -               tarea_clave_registrada.rc != 0 # Si no hay clave guardada en nuestro archivo known_hosts
         tags:
             - knownhosts
+
+
+    -   name:               Cambio identificado en host existente
+        block:
+        -   name:               Informar del cambio identificado en el host
+            ansible.builtin.debug:
+                msg: |
+                                Cambio identificado en host existente:
+                                - Inventory hostname:   {{ inventory_hostname }}
+                                - Ansible host:         {{ ansible_host }}
+                                Claves:
+                                - registrada:           {{ tarea_clave_registrada.stdout | trim }}
+                                - actual:               {{ tarea_clave_actual.stdout | trim }}
+
+            changed_when:       knownHosts.updated.failHost
+            notify:             HOST_MODIFICADO
+            when: 
+                -               knownHosts.updated.logHost or knownHosts.updated.failHost
+
+        -   name:               Reemplazar la clave existe en el archivo known_hosts
+            block:
+            -   name:           Borrar la clave anterior del archivo known_hosts
+                ansible.builtin.shell:
+                    cmd: >          
+                                ssh-keygen -R {{ ansible_host }} 
+                changed_when:   false
+                delegate_to:    localhost
+            -   name:           Escribir la clave actual del host remoto en el fichero known_hosts
+                ansible.builtin.shell:
+                    cmd: >          
+                                echo "{{ tarea_clave_actual.stdout }}" >> ~/.ssh/known_hosts
+                changed_when:   knownHosts.updated.notifyChange if knownHosts.updated.notifyChange else defaultKnownHostsFile.updated.notifyChange
+                delegate_to:    localhost
+            when: 
+                -               knownHosts.updated.appendAutomatically if knownHosts.updated.appendAutomatically else defaultKnownHostsFile.updated.appendAutomatically
+                -               true if knownHosts.updated.limitedTo is None else ( (inventory_hostname in knownHosts.updated.limitedTo) or (ansible_host in knownHosts.updated.limitedTo) )
         when: 
-            - "" # Si hay clave en nuestro fichero
-                 # tarea_clave_registrada
-            - "" # Si ha cambiado (comparando la que hay, con la que hemos calculado actualmente para el host)
-                 # tarea_clave_actual tarea_clave_registrada
-            - "" # Si las variables lo permiten 
+                -               tarea_clave_registrada.rc == 0 
+                -               tarea_clave_registrada.stdout != tarea_clave_actual.stdout
+        tags:
+            - knownhosts
+
 
   post_tasks:
-    -   name:       Mostrar cómo ha quedado el archivo known_hosts
+    -   name:                   Mostrar cómo ha quedado el archivo known_hosts
+        ansible.builtin.shell:
+            cmd: >-
+                                cat ~/.ssh/known_hosts
+        changed_when:           false
+        delegate_to:            localhost
         tags: 
-            - debug # Se ejecutaría si no piden tags concretos
-                    # Si me limitan solo al tag knownhosts? NO
-                    # Si excluyen el tag debug? NO
+            - debug 
 
-    -   name:       Comprobar que puedo conectarme al host remoto
+    -   name:                   Comprobar que puedo conectarme al host remoto
+        ansible.builtin.shell:
+            cmd: >-
+                                echo "Conexión establecida con éxito"
+        changed_when:           false
         tags: 
             - never # A no ser que explícitamente me pidan test, no se ejecuta
             - test
 
   handlers:
-    - name:         Loguear si un host es nuevo y no está registrado
-      listen:       NUEVO_HOST
-    - name:         Loguear si un host ha cambiado de clave
-      listen:       HOST_MODIFICADO
-
-
-# Por desgracia, en este caso vamos a tirar mucho del módulo shell... que tiene escondida una jodienda!
-# El módulo shell siempre pone la tarea como changed.
-# Pero aún no siendo así, hay una pregunta que me tengo que hacer siempre que creo un playbook.
-# (En este caso, por usar el shell especialmente)
-# ¿Cuándo quiero que una tarea se marque como changed?
-# Qué tarea de este playbook debería acabar en estado changed? Si es que hay alguna!
-# Para que se usa el estado changed? Para identificar cambios en el sistema....
-#     En qué sistema?  En el 99% de los casos en el remoto!
-# Conceptualmente a priori no se me ocurre que el añadir la máquina remota al known host en local para poder 
-# conectarme con ella sea en ningún caso considerado un cambio!
-# Lo cuál no significa que en un caso de uso que no estoy contemplando pueda ser interesante.
-# podría crearme una variable! markAsChanged: true / false
-# Otra opción que podría utilizar es generar un mensaje de log claro
-# logChangedHosts
-# logNewHosts
-
+    - name:                     Detener la ejecución del playbook si el servidor se identifica
+      ansible.builtin.fail:
+        msg:                    Host no identificado. Deteniendo la ejecución.
+      listen:                   NUEVO_HOST
+      tags:
+           - knownhosts
+    - name:                     Loguear si un host ha cambiado de clave
+      ansible.builtin.fail:
+        msg:                    Cambio identificado en host existente. Deteniendo la ejecución.
+      listen:                   HOST_MODIFICADO
+      tags:
+           - knownhosts
 
