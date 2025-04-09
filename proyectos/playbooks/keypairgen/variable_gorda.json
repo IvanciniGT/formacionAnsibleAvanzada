@@ -1,0 +1,282 @@
+{
+    "async_status_result": {
+        "changed": false,
+        "msg": "All items completed",
+        "results": [
+            {
+                "ansible_job_id": "j956705738950.35507",
+                "ansible_loop_var": "item",
+                "attempts": 1,
+                "changed": false,
+                "comment": "",
+                "failed": false,
+                "filename": "/tmp/f002f7c4-9c69-58ec-a3a0-0f59e50f2727/f002f7c4-9c69-58ec-a3a0-0f59e50f2727",
+                "fingerprint": "SHA256:0mDkagM01nVNNHS+uXCSRRumNQMWTX03TG9Hpga7EqQ",
+                "finished": 1,
+                "invocation": {
+                    "module_args": {
+                        "attributes": null,
+                        "backend": "auto",
+                        "comment": null,
+                        "force": false,
+                        "group": null,
+                        "mode": null,
+                        "owner": null,
+                        "passphrase": "",
+                        "path": "/tmp/f002f7c4-9c69-58ec-a3a0-0f59e50f2727/f002f7c4-9c69-58ec-a3a0-0f59e50f2727",
+                        "private_key_format": "auto",
+                        "regenerate": "never",
+                        "selevel": null,
+                        "serole": null,
+                        "setype": null,
+                        "seuser": null,
+                        "size": 521,
+                        "state": "present",
+                        "type": "ecdsa",
+                        "unsafe_writes": false
+                    }
+                },
+                "item": {
+                    "ansible_job_id": "j956705738950.35507",
+                    "ansible_loop_var": "item",
+                    "changed": true,
+                    "failed": 0,
+                    "finished": 0,
+                    "item": {
+                        "info": {
+                            "algorithm": {
+                                "name": "ecdsa",
+                                "size": 521
+                            },
+                            "files": {
+                                "path": "~/.ssh/keypairs/produccion",
+                                "privateKeyName": "id_rsa",
+                                "publicKeyName": "id_rsa.pub"
+                            },
+                            "passphrase": null,
+                            "regenerate": false
+                        },
+                        "uuid": "f002f7c4-9c69-58ec-a3a0-0f59e50f2727"
+                    },
+                    "results_file": "/home/ec2-user/.ansible_async/j956705738950.35507",
+                    "started": 1
+                },
+                "public_key": "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBACWfKLZFfEL4NpkaPdOzxP20zRneuMCKnQ0JVJRIftdWFIPIePlpAwFcrc8A6bM0ndNJuyKCJLt7DG7tEBnRsIstAEV/lKcHEbiFZXZly6txnmTGOb3OrKqC0yaNvsJWsIQzrsp6KH1ItrcJ2W3gLSCnP8QBcm8VRPOOTseEc4Bt13e1Q==",
+                "results_file": "/home/ec2-user/.ansible_async/j956705738950.35507",
+                "size": 521,
+                "started": 1,
+                "stderr": "",
+                "stderr_lines": [],
+                "stdout": "",
+                "stdout_lines": [],
+                "type": "ecdsa"
+            },
+            {
+                "ansible_job_id": "j905162324223.35526",
+                "ansible_loop_var": "item",
+                "attempts": 1,
+                "changed": false,
+                "comment": "",
+                "failed": false,
+                "filename": "/tmp/b67707e4-af7a-51ae-ab0c-e271a670ae1a/b67707e4-af7a-51ae-ab0c-e271a670ae1a",
+                "fingerprint": "SHA256:TAfsNc31p327+ItAKzu5fCmu8+23OKgX/9M91GlVaQc",
+                "finished": 1,
+                "invocation": {
+                    "module_args": {
+                        "attributes": null,
+                        "backend": "auto",
+                        "comment": null,
+                        "force": false,
+                        "group": null,
+                        "mode": null,
+                        "owner": null,
+                        "passphrase": "",
+                        "path": "/tmp/b67707e4-af7a-51ae-ab0c-e271a670ae1a/b67707e4-af7a-51ae-ab0c-e271a670ae1a",
+                        "private_key_format": "auto",
+                        "regenerate": "never",
+                        "selevel": null,
+                        "serole": null,
+                        "setype": null,
+                        "seuser": null,
+                        "size": 1024,
+                        "state": "present",
+                        "type": "rsa",
+                        "unsafe_writes": false
+                    }
+                },
+                "item": {
+                    "ansible_job_id": "j905162324223.35526",
+                    "ansible_loop_var": "item",
+                    "changed": true,
+                    "failed": 0,
+                    "finished": 0,
+                    "item": {
+                        "info": {
+                            "algorithm": {
+                                "name": "rsa",
+                                "size": 1024
+                            },
+                            "files": {
+                                "path": "~/.ssh/keypairs/desarrollo",
+                                "privateKeyName": "id_rsa",
+                                "publicKeyName": "id_rsa.pub",
+                                "regenerate": true
+                            },
+                            "passphrase": null,
+                            "regenerate": false
+                        },
+                        "uuid": "b67707e4-af7a-51ae-ab0c-e271a670ae1a"
+                    },
+                    "results_file": "/home/ec2-user/.ansible_async/j905162324223.35526",
+                    "started": 1
+                },
+                "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDd/oTKQNfELicz4XWsUDvMlKau5KBmhS/5XAbXa+W3eYebW65IH2RSxron/mfXhnP+xutyNfRejwVPV40R/n6XeMsmeL/v6TKPI7z1XD53lEXifM26tl295ff3gOcJK2peH9nIJJLjiD/cojI15ZKtEZ6SrG506XNSG8J4MvZuaw==",
+                "results_file": "/home/ec2-user/.ansible_async/j905162324223.35526",
+                "size": 1024,
+                "started": 1,
+                "stderr": "",
+                "stderr_lines": [],
+                "stdout": "",
+                "stdout_lines": [],
+                "type": "rsa"
+            },
+            {
+                "ansible_job_id": "j338110285414.35605",
+                "ansible_loop_var": "item",
+                "attempts": 1,
+                "changed": false,
+                "comment": "",
+                "failed": false,
+                "filename": "/tmp/4338339e-6a85-59c8-90b8-1fcdf0fb66bf/4338339e-6a85-59c8-90b8-1fcdf0fb66bf",
+                "fingerprint": "SHA256:eIx9ojgHgcJJzE0BkuMLZEp/bx6z2m1xzouC+CvSGwM",
+                "finished": 1,
+                "invocation": {
+                    "module_args": {
+                        "attributes": null,
+                        "backend": "auto",
+                        "comment": null,
+                        "force": false,
+                        "group": null,
+                        "mode": null,
+                        "owner": null,
+                        "passphrase": "",
+                        "path": "/tmp/4338339e-6a85-59c8-90b8-1fcdf0fb66bf/4338339e-6a85-59c8-90b8-1fcdf0fb66bf",
+                        "private_key_format": "auto",
+                        "regenerate": "never",
+                        "selevel": null,
+                        "serole": null,
+                        "setype": null,
+                        "seuser": null,
+                        "size": 1024,
+                        "state": "present",
+                        "type": "rsa",
+                        "unsafe_writes": false
+                    }
+                },
+                "item": {
+                    "ansible_job_id": "j338110285414.35605",
+                    "ansible_loop_var": "item",
+                    "changed": true,
+                    "failed": 0,
+                    "finished": 0,
+                    "item": {
+                        "info": {
+                            "algorithm": {
+                                "name": "rsa",
+                                "size": 1024
+                            },
+                            "files": {
+                                "path": "~/.ssh/keypairs/bbdd",
+                                "privateKeyName": "id_rsa",
+                                "publicKeyName": "id_rsa.pub"
+                            },
+                            "passphrase": null,
+                            "regenerate": false
+                        },
+                        "uuid": "4338339e-6a85-59c8-90b8-1fcdf0fb66bf"
+                    },
+                    "results_file": "/home/ec2-user/.ansible_async/j338110285414.35605",
+                    "started": 1
+                },
+                "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDFQyBC6B0LBmMoI8qY8oHQh4pu4wRa1+CtmAsd3NxkfaNBacNqyrbVvzBWJlIgThL5ECeCHLPpbyeLHlwOS/pTLStQj1B23k3Wlt55XVqHnBxOKIcXIExI5fMxHZFQIkkxpXN9WPb25qmE34V/2HUgNNRrwpoAgf2zx9Z0ye6dww==",
+                "results_file": "/home/ec2-user/.ansible_async/j338110285414.35605",
+                "size": 1024,
+                "started": 1,
+                "stderr": "",
+                "stderr_lines": [],
+                "stdout": "",
+                "stdout_lines": [],
+                "type": "rsa"
+            },
+            {
+                "ansible_job_id": "j738476268327.35627",
+                "ansible_loop_var": "item",
+                "attempts": 1,
+                "changed": false,
+                "comment": "",
+                "failed": false,
+                "filename": "/tmp/0dfa17d2-bdca-504b-bf6f-9b989e47a766/0dfa17d2-bdca-504b-bf6f-9b989e47a766",
+                "fingerprint": "SHA256:/ysdv94aIPV0DsRkYqmDc044kG+WuCt2PhKQvQcgZWE",
+                "finished": 1,
+                "invocation": {
+                    "module_args": {
+                        "attributes": null,
+                        "backend": "auto",
+                        "comment": null,
+                        "force": false,
+                        "group": null,
+                        "mode": null,
+                        "owner": null,
+                        "passphrase": "",
+                        "path": "/tmp/0dfa17d2-bdca-504b-bf6f-9b989e47a766/0dfa17d2-bdca-504b-bf6f-9b989e47a766",
+                        "private_key_format": "auto",
+                        "regenerate": "never",
+                        "selevel": null,
+                        "serole": null,
+                        "setype": null,
+                        "seuser": null,
+                        "size": 1024,
+                        "state": "present",
+                        "type": "rsa",
+                        "unsafe_writes": false
+                    }
+                },
+                "item": {
+                    "ansible_job_id": "j738476268327.35627",
+                    "ansible_loop_var": "item",
+                    "changed": true,
+                    "failed": 0,
+                    "finished": 0,
+                    "item": {
+                        "info": {
+                            "algorithm": {
+                                "name": "rsa",
+                                "size": 1024
+                            },
+                            "files": {
+                                "path": "~/.ssh/keypairs/pre",
+                                "privateKeyName": "id_rsa",
+                                "publicKeyName": "id_rsa.pub"
+                            },
+                            "passphrase": null,
+                            "regenerate": false
+                        },
+                        "uuid": "0dfa17d2-bdca-504b-bf6f-9b989e47a766"
+                    },
+                    "results_file": "/home/ec2-user/.ansible_async/j738476268327.35627",
+                    "started": 1
+                },
+                "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDKPp367cAYahYMMybXTl8inEm+Aw7cm4nbrRawbfikankmjmhiwIJNYt6lULo74bbpCqsjqm+APXHDZf6gx2mJEXCn/CCmbs3rrxLC5rn5Wy2kTfUjzUwYHOYsqGEq9+rMyCjCiB/7saEyeikwoDeYxG+fhIB2DRxzTx6MtEDysw==",
+                "results_file": "/home/ec2-user/.ansible_async/j738476268327.35627",
+                "size": 1024,
+                "started": 1,
+                "stderr": "",
+                "stderr_lines": [],
+                "stdout": "",
+                "stdout_lines": [],
+                "type": "rsa"
+            }
+        ],
+        "skipped": false
+    }
+}

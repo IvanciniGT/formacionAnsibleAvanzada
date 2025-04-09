@@ -1,21 +1,21 @@
 
--   hosts: all
+-   hosts: localhost
     gather_facts: false
   
     vars:
 
       validAlgorithms:
-        - rsa:
+        rsa:
             - 1024
             - 2048
             - 4096
-        - dsa:
+        dsa:
             - 1024
-        - ecdsa:
+        ecdsa:
             - 256
             - 384
             - 521
-        - ed25519: ~
+        ed25519: ~
 
       defaultSshKeyPairsSettings: # Los proveo YO en el playbook
             algorithm:
@@ -87,30 +87,47 @@
         block:
           - name:            Generar un UUID
             set_fact:
-              keypair_uuid:  "{{ (item.files.path +'/'+ item.files.privateKeyName) | to_uuid }}"
+              paresDeClavesConUUID: |    
+                             {{ paresDeClavesConUUID | default([]) + [{'uuid': uuid, 'info': item}] }}
+            vars: 
+              uuid:         "{{ (item.files.path +'/'+ item.files.privateKeyName) | to_uuid }}"
             loop:           "{{ paresDeClaves }}"
 
           - name:            Asegurar que hay una carpeta temporal para ese UUID
             file:
-              path:              "/tmp/{{ item }}"
-              state:             directory
-            loop:           "{{ keypair_uuid }}"
+              path:          "/tmp/{{ item.uuid }}"
+              state:         directory
+            loop:            "{{ paresDeClavesConUUID }}"
+
 
           - name:            Copiar las existentes (si las hay) a la carpeta temporal
             copy:
-              src:               "{{ item.files.path }}/{{ item.files.privateKeyName }}"
-              dest:              "/tmp/{{ item }}/{{ item }}"
-            loop:           "{{ paresDeClaves }}"
+              remote_src:    true
+              src:           "{{ item.info.files.path }}/{{ item.info.files.privateKeyName }}"
+              dest:          "/tmp/{{ item.uuid }}/{{ item.uuid }}"
+            failed_when:     false
+            changed_when:    false
+            loop:            "{{ paresDeClavesConUUID }}"
+
+          - name:            Copiar las existentes (si las hay) a la carpeta temporal
+            copy:
+              remote_src:    true
+              src:           "{{ item.info.files.path }}/{{ item.info.files.publicKeyName }}"
+              dest:          "/tmp/{{ item.uuid }}/{{ item.uuid }}.pub"
+            failed_when:     false
+            changed_when:    false
+            loop:            "{{ paresDeClavesConUUID }}"
 
           - name:            (Re)generamos las claves, caso de ser necesario
             community.crypto.openssh_keypair:
-              path:             /tmp/UUID/UUID
-              type:             "{{ item.algorithm.name }}"
-              size:             "{{ item.algorithm.size }}"
-              regenerate:       "{{ 'always' if item.regenerate else 'never' }}"
-              passphrase:       "{{ item.passphrase }}"
-            loop:           "{{ paresDeClaves }}"
-            register:       resultado 
+              path:          "/tmp/{{ item.uuid }}/{{ item.uuid }}"
+              type:          "{{ item.info.algorithm.name }}"
+              size:          "{{ item.info.algorithm.size }}"
+              regenerate:    "{{ 'always' if item.info.regenerate else 'never' }}"
+              passphrase:    "{{ item.info.passphrase }}"
+            changed_when:    false
+            loop:            "{{ paresDeClavesConUUID }}"
+            register:        resultado
             async:           60
             poll:            0
 
@@ -123,8 +140,30 @@
             delay:            3
             loop:             "{{ resultado.results }}"
 
-          - name:             Para quellas que se hayan (re)generado, las copio a su destino
-            copy:
-              src:               "/tmp/{{ 
+          - debug:
+               var: async_status_result
 
-          - name:             Borramos la carpeta temporal
+          - name:            Copiar las claves privadas generadas a su destino
+            copy:
+              remote_src:    true
+              src:           "{{ item.filename }}"
+              dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.privateKeyName }}"
+              force:         true
+            when:            item.changed
+            loop:            "{{ async_status_result }}"
+
+          - name:            Copiar las claves publicas generadas a su destino
+            copy:
+              remote_src:    true
+              src:           "{{ item.filename }}.pub"
+              dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.publicKeyName }}"
+              force:         true
+            when:            item.changed
+            loop:            "{{ async_status_result }}"
+
+
+          - name:            Borrar los directorios temporales
+          
+            changed_when:    false
+            loop:            "{{ async_status_result }}"
+
