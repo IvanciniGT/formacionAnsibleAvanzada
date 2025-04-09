@@ -1,0 +1,57 @@
+
+-   hosts: all
+    gather_facts: false
+  
+    vars:
+      defaultSshKeyPairsSettings: # Los proveo YO en el playbook
+            algorithm:
+              name: rsa
+              size: 2048
+            regenerate: false
+            passphrase: ~
+            files:
+              path:  ~/.ssh/keypairs
+              privateKeyName: id_rsa
+              publicKeyName:  id_rsa.pub
+
+      sshKeyPairs:
+        defaultSettings: # Estos los provee el usuario
+            algorithm:
+              name: rsa
+              size: 1024
+            regenerate: false
+            passphrase: ~
+            files:
+              path:  ~/.ssh/keypairs
+              privateKeyName: id_rsa
+              publicKeyName:  id_rsa.pub
+        keyPairs: # Los settings del usuario (con mis valores por defecto) se aplican sobre cada par de claves a generar
+        - files:
+            path:  ~/.ssh/keypairs/produccion
+          algorithm:
+              name: ecdsa
+              size: 521
+        - files:
+            path:  ~/.ssh/keypairs/desarrollo
+            regenerate: true
+        - files:
+            path:  ~/.ssh/keypairs/bbdd
+        - files:
+            path:  ~/.ssh/keypairs/pre
+
+    pre_tasks:
+      - name:   Calcular los valores por defecto de las claves ssh que hay que generar
+        set_fact:
+          defaultSettings: |
+                              {{ defaultSshKeyPairsSettings | combine((sshKeyPairs| default({})).defaultSettings | default({}), recursive = true) }}
+
+      - name:   Aplicar los valores por defecto sobre cada keypair que haya que generar 
+        set_facts:
+          paresDeClaves: |
+                              paresDeClaves | default([]) + [parDeClaves]
+        vars:
+          parDeClaves: "{{ defaultSettings.combine(item, recursive = true) }}"
+        loop:
+          - "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
+
+

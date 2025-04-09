@@ -1,7 +1,0 @@
-- hosts: all
-  gather_facts: false
-
-  tasks:
-  - name: "Saluda"
-    debug:
-      msg: "HOLA"
