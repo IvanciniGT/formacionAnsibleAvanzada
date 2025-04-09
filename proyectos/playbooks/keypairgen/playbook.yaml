@@ -46,11 +46,13 @@
                               {{ defaultSshKeyPairsSettings | combine((sshKeyPairs| default({})).defaultSettings | default({}), recursive = true) }}
 
       - name:   Aplicar los valores por defecto sobre cada keypair que haya que generar 
-        set_facts:
+        set_fact:
           paresDeClaves: |
-                              paresDeClaves | default([]) + [parDeClaves]
+                             {{ paresDeClaves | default([]) + [parDeClaves] }}
         vars:
-          parDeClaves: "{{ defaultSettings.combine(item, recursive = true) }}"
-        loop:   "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
+          parDeClaves: "{{ defaultSettings | combine(item, recursive = true) }}"
+        loop: "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
 
+      - debug:
+         var: paresDeClaves
 
