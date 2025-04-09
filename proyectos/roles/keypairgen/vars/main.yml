@@ -1,0 +1,33 @@
+
+pythonDependencies:
+    - bcrypt
+    - cryptography
+
+osDependencies:
+    - openssh
+    - ssh-keygen
+
+
+validAlgorithms:
+    rsa:
+        - 1024
+        - 2048
+        - 4096
+    dsa:
+        - 1024
+    ecdsa:
+        - 256
+        - 384
+        - 521
+    ed25519: ~
+
+defaultSshKeyPairsSettings: # Los proveo YO en el playbook
+    algorithm:
+        name: rsa
+        size: 2048
+    regenerate: false
+    passphrase: ~
+    files:
+        path:  ~/.ssh/keypairs
+        privateKeyName: id_rsa
+        publicKeyName:  id_rsa.pub

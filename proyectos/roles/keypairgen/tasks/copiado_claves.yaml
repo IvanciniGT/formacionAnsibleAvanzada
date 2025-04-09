@@ -1,0 +1,21 @@
+
+- name:            Copiar las claves privadas generadas a su destino
+  copy:
+    remote_src:    true
+    src:           "{{ item.filename }}"
+    dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.privateKeyName }}"
+    force:         true
+
+- name:            Copiar las claves publicas generadas a su destino
+  copy:
+    remote_src:    true
+    src:           "{{ item.filename }}.pub"
+    dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.publicKeyName }}"
+    force:         true
+
+
+- name:            Borrar los directorios temporales
+  file:
+    path:          "/tmp/{{ item.item.item.uuid }}"
+    state:         absent
+  changed_when:    false

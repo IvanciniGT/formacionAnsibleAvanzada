@@ -1,0 +1,18 @@
+
+sshKeyPairs:
+    defaultSettings: # Estos los provee el usuario
+        algorithm:
+            name: rsa
+            size: 1024
+        regenerate: false
+        passphrase: MiPassPhraseSuperSecreto
+        files:
+            path:  ~/.ssh/keypairs
+            privateKeyName: id_rsa
+            publicKeyName:  id_rsa.pub
+    keyPairs: # Los settings del usuario (con mis valores por defecto) se aplican sobre cada par de claves a generar
+    - files:
+        path:  ~/.ssh/test
+        algorithm:
+            name: ecdsa
+            size: 521
