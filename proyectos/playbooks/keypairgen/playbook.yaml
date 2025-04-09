@@ -3,6 +3,21 @@
     gather_facts: false
   
     vars:
+
+      validAlgorithms:
+        - rsa:
+            - 1024
+            - 2048
+            - 4096
+        - dsa:
+            - 1024
+        - ecdsa:
+            - 256
+            - 384
+            - 521
+        - ed25519: ~
+
+
       defaultSshKeyPairsSettings: # Los proveo YO en el playbook
             algorithm:
               name: rsa
@@ -40,19 +55,29 @@
             path:  ~/.ssh/keypairs/pre
 
     pre_tasks:
-      - name:   Calcular los valores por defecto de las claves ssh que hay que generar
+      - name:                 Calcular los valores por defecto de las claves ssh que hay que generar
         set_fact:
           defaultSettings: |
                               {{ defaultSshKeyPairsSettings | combine((sshKeyPairs| default({})).defaultSettings | default({}), recursive = true) }}
 
-      - name:   Aplicar los valores por defecto sobre cada keypair que haya que generar 
+      - name:                 Aplicar los valores por defecto sobre cada keypair que haya que generar 
         set_fact:
           paresDeClaves: |
                              {{ paresDeClaves | default([]) + [parDeClaves] }}
         vars:
-          parDeClaves: "{{ defaultSettings | combine(item, recursive = true) }}"
-        loop: "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
+          parDeClaves:      "{{ defaultSettings | combine(item, recursive = true) }}"
+        loop:               "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
 
-      - debug:
-         var: paresDeClaves
+      - name:               Validar los datos suministrados para cada par de claves
+        assert:
+          that:
+                          - algoritmo in validAlgorithms
+                          - (true if validAlgorithms[algoritmo] is none else item.algorithm.size in validAlgorithms[algoritmo])
+        vars:
+          algoritmo:       "{{ item.algorithm.name | lower }}"
+        loop:              "{{ paresDeClaves }}"
 
+      - name:               Asegurar que existe el directorio para almacenar las claves
+
+      - name:               Generar las claves
+      # Si ya existen.. y en base al regenerar
