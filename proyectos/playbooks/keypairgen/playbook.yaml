@@ -4,6 +4,15 @@
   
     vars:
 
+      pythonDependencies:
+        - bcrypt
+        - cryptography
+
+      osDependencies:
+        - openssh
+        - ssh-keygen
+        
+
       validAlgorithms:
         rsa:
             - 1024
@@ -34,7 +43,7 @@
               name: rsa
               size: 1024
             regenerate: false
-            passphrase: ~
+            passphrase: MiPassPhraseSuperSecreto
             files:
               path:  ~/.ssh/keypairs
               privateKeyName: id_rsa
@@ -50,10 +59,19 @@
             regenerate: true
         - files:
             path:  ~/.ssh/keypairs/bbdd
+            privateKeyName: bbddPrivate
+            publicKeyName:  bbddPublic
         - files:
             path:  ~/.ssh/keypairs/pre
 
     pre_tasks:
+
+      - name:                 Asegurar las dependencias de módulos de python
+        pip:
+          name:               "{{ item }}"
+          state:              present
+        loop:                 "{{ pythonDependencies }}"
+
       - name:                 Calcular los valores por defecto de las claves ssh que hay que generar
         set_fact:
           defaultSettings: |
@@ -93,10 +111,18 @@
               uuid:         "{{ (item.files.path +'/'+ item.files.privateKeyName) | to_uuid }}"
             loop:           "{{ paresDeClaves }}"
 
+          - name:            Asegurar que no hay datos anteriores
+            file:
+              path:          "/tmp/{{ item.uuid }}"
+              state:         absent
+            changed_when:    false
+            loop:            "{{ paresDeClavesConUUID }}"
+
           - name:            Asegurar que hay una carpeta temporal para ese UUID
             file:
               path:          "/tmp/{{ item.uuid }}"
               state:         directory
+            changed_when:    false
             loop:            "{{ paresDeClavesConUUID }}"
 
 
@@ -138,6 +164,7 @@
             until:            async_status_result.finished
             retries:          10
             delay:            3
+            changed_when:     false
             loop:             "{{ resultado.results }}"
 
           - debug:
@@ -149,8 +176,7 @@
               src:           "{{ item.filename }}"
               dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.privateKeyName }}"
               force:         true
-            when:            item.changed
-            loop:            "{{ async_status_result }}"
+            loop:            "{{ async_status_result.results }}"
 
           - name:            Copiar las claves publicas generadas a su destino
             copy:
@@ -158,8 +184,7 @@
               src:           "{{ item.filename }}.pub"
               dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.publicKeyName }}"
               force:         true
-            when:            item.changed
-            loop:            "{{ async_status_result }}"
+            loop:            "{{ async_status_result.results }}"
 
 
           - name:            Borrar los directorios temporales
@@ -167,5 +192,5 @@
               path:          "/tmp/{{ item.item.item.uuid }}"
               state:         absent
             changed_when:    false
-            loop:            "{{ async_status_result }}"
+            loop:            "{{ async_status_result.results }}"
 
