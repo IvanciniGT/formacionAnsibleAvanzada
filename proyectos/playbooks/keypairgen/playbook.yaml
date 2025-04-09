@@ -51,7 +51,6 @@
                               paresDeClaves | default([]) + [parDeClaves]
         vars:
           parDeClaves: "{{ defaultSettings.combine(item, recursive = true) }}"
-        loop:
-          - "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
+        loop:   "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
 
 
