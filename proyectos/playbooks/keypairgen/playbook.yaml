@@ -163,7 +163,9 @@
 
 
           - name:            Borrar los directorios temporales
-          
+            file:
+              path:          "/tmp/{{ item.item.item.uuid }}"
+              state:         absent
             changed_when:    false
             loop:            "{{ async_status_result }}"
 
