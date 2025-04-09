@@ -77,6 +77,31 @@
         loop:                "{{ paresDeClaves }}"
 
       - name:                Asegurar que existe el directorio para almacenar las claves
+        file:
+          path:              "{{ item.files.path }}"
+          state:             directory
+        loop:                "{{ paresDeClaves }}"
 
       - name:                Generar las claves
       # Si ya existen.. y en base al regenerar
+        # Generar un UUID
+        # Vamos a trabajar todo en /tmp/UUID/UUID (privada)
+                                  #/tmp/UUID/UUID.pub (publica)
+
+        # Necesitamos cambiar el nombre del fichero de la clave pública
+        "{{ item.files.path }}/{{ item.files.privateKeyName }}" --->  /tmp/UUID/UUID
+        "{{ item.files.path }}/{{ item.files.publicKeyName }}" --->   /tmp/UUID/UUID.pub
+
+        community.crypto.openssh_keypair:
+          path:             /tmp/UUID/UUID
+          type:             "{{ item.algorithm.name }}"
+          size:             "{{ item.algorithm.size }}"
+          regenerate:       "{{ 'always' if item.regenerate else 'never' }}"
+          passphrase:       "{{ item.passphrase }}"
+
+        
+        # Necesitamos cambiar el nombre del fichero de la clave pública (Y ESTO LO HAGO SOLO SI LA TAREA ANTERIOR PROVOCA CAMBIO)
+        # /tmp/UUID/UUID.pub  --->  "{{ item.files.path }}/{{ item.files.publicKeyName }}"
+        # /tmp/UUID/UUID  --->  "{{ item.files.path }}/{{ item.files.privateKeyName }}"
+
+        # Y los temporales los borro (la carpeta: /tmp/UUID)
