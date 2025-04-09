@@ -1,0 +1,34 @@
+- name:                     Ejecutar tareas asíncronas en loop y esperar a su finalización
+
+  hosts:                    localhost
+
+  gather_facts:             false
+
+  tasks:
+
+    - name:                 Ejecutar comando de manera asíncrona para cada item
+      command:              sleep {{ item }}
+      async:                60       # Tiempo máximo (en segundos) que se le permitirá a cada comando ejecutarse
+      poll:                 0         # Ejecuta en segundo plano, sin esperar a que termine la tarea
+      register:             async_results
+      loop:                 [5, 10, 15]   # Ejemplo: cada tarea ejecuta "sleep" por 5, 10 o 15 segundos
+
+    - name:                 Esperar a que se completen todas las tareas asíncronas
+
+      async_status:
+        jid:                "{{ item.ansible_job_id }}"
+      register:             async_status_result
+      until:                async_status_result.finished
+      retries: 10
+      delay: 3
+      loop:                 "{{ async_results.results }}"
+
+    - name:                 Mostrar el resultado final de cada tarea asíncrona
+      debug:
+        msg: |
+                              Tarea "sleep {{ item.item }}" finalizó:
+                              - Terminada: {{ item.finished }}
+                              - Código de retorno: {{ item.rc }}
+                              - Salida estándar: {{ item.stdout | default('') }}
+                              - Salida de error: {{ item.stderr | default('') }}
+      loop:                 "{{ async_status_result.results }}"

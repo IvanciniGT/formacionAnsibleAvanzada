@@ -17,7 +17,6 @@
             - 521
         - ed25519: ~
 
-
       defaultSshKeyPairsSettings: # Los proveo YO en el playbook
             algorithm:
               name: rsa
@@ -68,16 +67,16 @@
           parDeClaves:      "{{ defaultSettings | combine(item, recursive = true) }}"
         loop:               "{{ (sshKeyPairs| default({})).keyPairs | default([]) }}"
 
-      - name:               Validar los datos suministrados para cada par de claves
+      - name:                Validar los datos suministrados para cada par de claves
         assert:
           that:
-                          - algoritmo in validAlgorithms
-                          - (true if validAlgorithms[algoritmo] is none else item.algorithm.size in validAlgorithms[algoritmo])
+                          -  algoritmo in validAlgorithms
+                          -  (true if validAlgorithms[algoritmo] is none else item.algorithm.size in validAlgorithms[algoritmo])
         vars:
-          algoritmo:       "{{ item.algorithm.name | lower }}"
-        loop:              "{{ paresDeClaves }}"
+          algoritmo:         "{{ item.algorithm.name | lower }}"
+        loop:                "{{ paresDeClaves }}"
 
-      - name:               Asegurar que existe el directorio para almacenar las claves
+      - name:                Asegurar que existe el directorio para almacenar las claves
 
-      - name:               Generar las claves
+      - name:                Generar las claves
       # Si ya existen.. y en base al regenerar
