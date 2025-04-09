@@ -7,7 +7,8 @@
   tasks:
 
     - name:                 Ejecutar comando de manera asíncrona para cada item
-      command:              sleep {{ item }}
+      shell:                
+         cmd:               sleep {{ item }}
       async:                60       # Tiempo máximo (en segundos) que se le permitirá a cada comando ejecutarse
       poll:                 0         # Ejecuta en segundo plano, sin esperar a que termine la tarea
       register:             async_results
