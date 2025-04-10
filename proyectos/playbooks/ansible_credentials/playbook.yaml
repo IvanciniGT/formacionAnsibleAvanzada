@@ -107,7 +107,7 @@
         - name:               Sacar de la respuesta el id de la organización
           set_fact:
             organizationId:     "{{ (resultado_organizacion.content|from_json).results[0].id }}"  
-
+    tasks:
     - name:                   Verificar si la credential ya existe
       block: 
         - name:               Llamar a la API de Ansible para obtener esa credential

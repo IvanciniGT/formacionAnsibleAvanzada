@@ -1,0 +1,23 @@
+# Este es el archivo de configuración de ansible navigator para mi entorno de pruebas
+
+ansible-navigator:
+  ansible:
+    inventory: 
+      entries:
+      - inventario.ini
+    
+    playbook:
+      path:               playbook.yaml
+
+  execution-environment:
+    container-engine:     auto
+    enabled:              true
+    image:                "quay.io/ansible/ansible-runner" # "ghcr.io/ansible/creator-ee:v0.22.0"
+    environment-variables:
+      pass:
+      - "MI_ENV_VAR=Hola Mundo"
+      set:
+        MI_ENV_VAR: "Hola Mundo"
+    #volume-mounts: Por ejemplo, para pruebas rápidas, donde INYECTE en el contenedor ROLES o COLLECTIONS que estoy desarrollando
+    #  - dest: 
+    #    src: 

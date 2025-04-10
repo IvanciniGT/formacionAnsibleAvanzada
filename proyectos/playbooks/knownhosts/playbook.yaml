@@ -2,7 +2,7 @@
 - hosts:        all       # Con esto la primera limitación de los hosts sobre los que este playbook puede ser ejecutado
                           # La limitación real se da al EJECUTAR EL PLAYBOOK --limit
   gather_facts: false     # Aquí siempre a false. Por la naturaleza del playbook que estamos montando
-                          # Si pongo esto a true, ya se va a intentar conectar por ssh... 
+                          # Si pongo esto a true, ya se va a intentar conectar por ssh
                           # y si no está dado de al alta en el known_hosts falla!
 
   vars: # constantes | valores por defecto de variables que quiera que me suministren por consola
