@@ -27,7 +27,7 @@
         - name:               Comprobar que me han dado nombre de organización
 
     - name:                   Obtener el id de la organization para dar de alta la credential
-      block:
+      block:                            https://3.252.89.208:8043/api/v2/organizations/?search=Federico
         - name:               Llamar a la API de Ansible para obtener esa organización
         - name:               Sacar de la respuesta el id de la organización
 
