@@ -1,4 +1,5 @@
-
+# $ ansible-playbook -i inventario playbook.yaml --extra-vars ="@keypairs.yaml" --extra-vars="ansibleCrendentialUserPassword=federico"
+# $ ansible-navigator run playbook.yaml
 -   hosts: localhost
     gather_facts: false
   

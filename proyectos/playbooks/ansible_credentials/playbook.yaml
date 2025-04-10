@@ -1,0 +1,36 @@
+
+-   hosts:            all
+    vars:
+      ansibleCrendential:
+        organizationName:
+        ansibleServer:
+          url:
+        credentialName:
+        userName:
+        becomeUserName:
+
+      ansibleCrendentialAnsibleServerToken: ~
+      ansibleCrendentialUserPassword: ~
+      ansibleCrendentialBecomeUserPassword: ~
+      ansibleCrendentialUserPrivateSSHKey: ~
+      ansibleCrendentialUserPrivateSSHKeyPassphrase: ~
+
+    tasks:
+    - name:                   Validar los datos de entrada
+      block:
+        - name:               Comprobar que me han dado usuario
+        - name:               Comprobar que me han dado contraseña o me han dado una clave privada
+        - name:               Comprobar que me han dado usuario de escalado, que tenga también su contraseña
+        - name:               Comprobar que me han dado servidor válido
+        - name:               Comprobar que me han dado token válido
+        - name:               Comprobar que me han dado nombre de credential
+        - name:               Comprobar que me han dado nombre de organización
+
+    - name:                   Obtener el id de la organization para dar de alta la credential
+      block:
+        - name:               Llamar a la API de Ansible para obtener esa organización
+        - name:               Sacar de la respuesta el id de la organización
+
+    - name:                   Verificar si la credential ya existe
+    #- name:                   Si existe se modifica... No estamos respetando idempotencia
+    - name:                   Si no existe se crea
