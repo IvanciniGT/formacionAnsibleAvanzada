@@ -1,0 +1,56 @@
+- hosts:               remoto
+  gather_facts:       false
+  vars:
+  tasks:
+    - name:          Asegurarnos que tenemos registrado ese host en el known_hosts
+      include_role:
+        name:       knownhosts
+      vars:
+          knownHostsFile:
+              algorithm:                  ecdsa
+              new:
+                  appendAutomatically:    true
+                  limitedTo:              ~
+                  logHost:                true
+                  notifyChange:           false
+                  failHost:               false
+              updated:
+                  updateAutomatically:    true
+                  limitedTo:              ~
+                  logHost:                true
+                  notifyChange:           false
+                  failHost:               false
+
+    - name:          Asegurarnos que tenemos registrado ese host en el known_hosts
+      include_role:
+        name:       keypairgen
+      vars:
+          sshKeyPairs:
+              keyPairs:
+              - files:
+                    path:  ~/.ssh/keypairs
+                    privateKeyName: curso
+                    publicKeyName:  curso.pub
+                algorithm:
+                    name: ecdsa
+                    size: 521
+                regenerate: true  
+                passphrase: MiPassPhraseSuperSecreto
+
+    - name:          Añadir la nueva clave ssh en el tower
+      include_role:
+        name:       credentials
+      vars:
+        ansibleCrendential:
+          organizationName:   Default
+          ansibleServer:
+            url:              https://54.75.98.186:8043/
+          credentialName:     CredencialCurso
+          userName:           root
+          becomeUserName:     ~
+
+        ansibleCrendentialAnsibleServerToken:         gZUmWHAQshS2AuNhziixdbg0uuMQPR
+        ansibleCrendentialUserPassword:               ~
+        ansibleCrendentialBecomeUserPassword:         ~
+        ansibleCrendentialUserPrivateSSHKey:          "{{ lookup('file', '~/.ssh/keypairs/curso') }}"
+        ansibleCrendentialUserPrivateSSHKeyPassphrase: MiPassPhraseSuperSecreto

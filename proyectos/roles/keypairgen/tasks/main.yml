@@ -4,6 +4,7 @@
           name:               "{{ item }}"
           state:              present
         loop:                 "{{ pythonDependencies }}"
+        delegate_to:          localhost
 
       - name:                 Calcular los valores por defecto de las claves ssh que hay que generar
         set_fact:
@@ -32,6 +33,7 @@
           path:              "{{ item.files.path }}"
           state:             directory
         loop:                "{{ paresDeClaves }}"
+        delegate_to:          localhost
 
       - name:                Generar las claves 
 
@@ -50,6 +52,7 @@
               state:         absent
             changed_when:    false
             loop:            "{{ paresDeClavesConUUID }}"
+            delegate_to:          localhost
 
           - name:            Asegurar que hay una carpeta temporal para ese UUID
             file:
@@ -57,6 +60,7 @@
               state:         directory
             changed_when:    false
             loop:            "{{ paresDeClavesConUUID }}"
+            delegate_to:          localhost
 
 
           - name:            Copiar las existentes (si las hay) a la carpeta temporal
@@ -67,6 +71,7 @@
             failed_when:     false
             changed_when:    false
             loop:            "{{ paresDeClavesConUUID }}"
+            delegate_to:          localhost
 
           - name:            Copiar las existentes (si las hay) a la carpeta temporal
             copy:
@@ -76,6 +81,7 @@
             failed_when:     false
             changed_when:    false
             loop:            "{{ paresDeClavesConUUID }}"
+            delegate_to:          localhost
 
           - name:            (Re)generamos las claves, caso de ser necesario
             community.crypto.openssh_keypair:
@@ -89,6 +95,7 @@
             register:        resultado
             async:           60
             poll:            0
+            delegate_to:          localhost
 
           - name:            Esperar a que se completen todas las tareas asíncronas
             async_status:
@@ -99,6 +106,7 @@
             delay:            3
             changed_when:     false
             loop:             "{{ resultado.results }}"
+            delegate_to:          localhost
 
           - debug:
                var: async_status_result

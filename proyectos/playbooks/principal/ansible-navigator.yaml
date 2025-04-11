@@ -1,0 +1,18 @@
+# Este es el archivo de configuración de ansible navigator para mi entorno de pruebas
+
+ansible-navigator:
+  ansible:
+    inventory: 
+      entries:
+      -                   inventario.ini
+    
+    playbook:
+      path:               playbook.yaml
+
+  execution-environment:
+    container-engine:     auto
+    enabled:              true
+    image:                "curso-roles:latest"
+    environment-variables:
+      set:
+        ANSIBLE_ROLES_PATH: "/roles"

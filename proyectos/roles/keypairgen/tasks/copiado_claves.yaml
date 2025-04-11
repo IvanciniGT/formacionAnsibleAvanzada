@@ -5,6 +5,7 @@
     src:           "{{ item.filename }}"
     dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.privateKeyName }}"
     force:         true
+  delegate_to:          localhost
 
 - name:            Copiar las claves publicas generadas a su destino
   copy:
@@ -12,6 +13,7 @@
     src:           "{{ item.filename }}.pub"
     dest:          "{{ item.item.item.info.files.path }}/{{ item.item.item.info.files.publicKeyName }}"
     force:         true
+  delegate_to:          localhost
 
 
 - name:            Borrar los directorios temporales
@@ -19,3 +21,4 @@
     path:          "/tmp/{{ item.item.item.uuid }}"
     state:         absent
   changed_when:    false
+  delegate_to:          localhost
