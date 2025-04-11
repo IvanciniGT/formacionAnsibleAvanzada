@@ -1,0 +1,533 @@
+{
+    "plays": [
+        {
+            "___progress": "100%",
+            "__changed": 0,
+            "__failed": 1,
+            "__ignored": 0,
+            "__in progress": 0,
+            "__ok": 6,
+            "__percent_complete": 100,
+            "__play_name": "remoto",
+            "__progress": "Complete",
+            "__skipped": 0,
+            "__task_count": 7,
+            "__unreachable": 0,
+            "name": "remoto",
+            "pattern": "remoto",
+            "play": "remoto",
+            "play_pattern": "remoto",
+            "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+            "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+            "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+            "tasks": [
+                {
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__host": "remoto",
+                    "__number": 0,
+                    "__result": "Ok",
+                    "__task": "Asegurarnos que tenemos registrado ese host en el known_hosts",
+                    "__task_action": "include_role",
+                    "duration": 0.019616,
+                    "end": "2025-04-11T17:05:39.515428+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "changed": false,
+                        "include_args": {
+                            "name": "curso.coleccion.knownhosts"
+                        }
+                    },
+                    "resolved_action": null,
+                    "start": "2025-04-11T17:05:39.495812+00:00",
+                    "task": "Asegurarnos que tenemos registrado ese host en el known_hosts",
+                    "task_action": "include_role",
+                    "task_args": "",
+                    "task_path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml:5",
+                    "task_uuid": "0242ac11-0002-51f4-7100-000000000004",
+                    "uuid": "1239e033-943e-47ec-a6f7-5e2c8885fc27"
+                },
+                {
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__host": "remoto",
+                    "__number": 1,
+                    "__result": "Ok",
+                    "__task": "Aplico los valores por defecto a los datos no suministrados",
+                    "__task_action": "ansible.builtin.set_fact",
+                    "duration": 0.075081,
+                    "end": "2025-04-11T17:05:39.681244+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "_ansible_no_log": false,
+                        "ansible_facts": {
+                            "knownHosts": {
+                                "algorithm": "ecdsa",
+                                "new": {
+                                    "appendAutomatically": true,
+                                    "failHost": false,
+                                    "limitedTo": null,
+                                    "logHost": true,
+                                    "notifyChange": false
+                                },
+                                "updated": {
+                                    "failHost": false,
+                                    "limitedTo": null,
+                                    "logHost": true,
+                                    "notifyChange": false,
+                                    "updateAutomatically": true
+                                }
+                            }
+                        },
+                        "changed": false
+                    },
+                    "resolved_action": "ansible.builtin.set_fact",
+                    "resolved_role": "curso.coleccion.knownhosts",
+                    "role": "knownhosts",
+                    "start": "2025-04-11T17:05:39.606163+00:00",
+                    "task": "Aplico los valores por defecto a los datos no suministrados",
+                    "task_action": "ansible.builtin.set_fact",
+                    "task_args": "",
+                    "task_path": "/usr/share/ansible/collections/ansible_collections/curso/coleccion/roles/knownhosts/tasks/main.yml:4",
+                    "task_uuid": "0242ac11-0002-51f4-7100-000000000024",
+                    "uuid": "92c5adb2-a483-4460-8327-78688414fc6a"
+                },
+                {
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__host": "remoto",
+                    "__number": 2,
+                    "__result": "Ok",
+                    "__task": "Extraemos el algoritmo a usar",
+                    "__task_action": "ansible.builtin.set_fact",
+                    "duration": 0.045471,
+                    "end": "2025-04-11T17:05:39.753620+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "_ansible_no_log": false,
+                        "ansible_facts": {
+                            "algoritmo": "ecdsa"
+                        },
+                        "changed": false
+                    },
+                    "resolved_action": "ansible.builtin.set_fact",
+                    "resolved_role": "curso.coleccion.knownhosts",
+                    "role": "knownhosts",
+                    "start": "2025-04-11T17:05:39.708149+00:00",
+                    "task": "Extraemos el algoritmo a usar",
+                    "task_action": "ansible.builtin.set_fact",
+                    "task_args": "",
+                    "task_path": "/usr/share/ansible/collections/ansible_collections/curso/coleccion/roles/knownhosts/tasks/main.yml:11",
+                    "task_uuid": "0242ac11-0002-51f4-7100-000000000025",
+                    "uuid": "80b150e1-abe6-4e24-b09c-e4a762d0cd3f"
+                },
+                {
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__host": "remoto",
+                    "__number": 3,
+                    "__result": "Ok",
+                    "__task": "Asegurar que se ha suministrado un valor correcto en knownHosts.new.limitedTo",
+                    "__task_action": "ansible.builtin.assert",
+                    "duration": 0.088177,
+                    "end": "2025-04-11T17:05:39.873379+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "_ansible_no_log": false,
+                        "changed": false,
+                        "msg": "All assertions passed"
+                    },
+                    "resolved_action": "ansible.builtin.assert",
+                    "resolved_role": "curso.coleccion.knownhosts",
+                    "role": "knownhosts",
+                    "start": "2025-04-11T17:05:39.785202+00:00",
+                    "task": "Asegurar que se ha suministrado un valor correcto en knownHosts.new.limitedTo",
+                    "task_action": "ansible.builtin.assert",
+                    "task_args": "",
+                    "task_path": "/usr/share/ansible/collections/ansible_collections/curso/coleccion/roles/knownhosts/tasks/main.yml:23",
+                    "task_uuid": "0242ac11-0002-51f4-7100-000000000027",
+                    "uuid": "285c975b-75be-4f97-a355-fcb211db8d9e"
+                },
+                {
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__host": "remoto",
+                    "__number": 4,
+                    "__result": "Ok",
+                    "__task": "Asegurar que se ha suministrado un valor correcto en knownHosts.updated.limitedTo",
+                    "__task_action": "ansible.builtin.assert",
+                    "duration": 0.053821,
+                    "end": "2025-04-11T17:05:39.971210+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "_ansible_no_log": false,
+                        "changed": false,
+                        "msg": "All assertions passed"
+                    },
+                    "resolved_action": "ansible.builtin.assert",
+                    "resolved_role": "curso.coleccion.knownhosts",
+                    "role": "knownhosts",
+                    "start": "2025-04-11T17:05:39.917389+00:00",
+                    "task": "Asegurar que se ha suministrado un valor correcto en knownHosts.updated.limitedTo",
+                    "task_action": "ansible.builtin.assert",
+                    "task_args": "",
+                    "task_path": "/usr/share/ansible/collections/ansible_collections/curso/coleccion/roles/knownhosts/tasks/main.yml:31",
+                    "task_uuid": "0242ac11-0002-51f4-7100-000000000028",
+                    "uuid": "8d7649a6-e884-4a8e-917a-8ee7f4d84bc2"
+                },
+                {
+                    "__changed": false,
+                    "__duration": "1s",
+                    "__host": "remoto",
+                    "__number": 5,
+                    "__result": "Ok",
+                    "__task": "Asegurar que existe la carpeta .ssh",
+                    "__task_action": "ansible.builtin.file",
+                    "duration": 0.613424,
+                    "end": "2025-04-11T17:05:40.618552+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "_ansible_delegated_vars": {
+                            "ansible_connection": "local",
+                            "ansible_host": "localhost",
+                            "ansible_port": null,
+                            "ansible_user": null
+                        },
+                        "_ansible_no_log": false,
+                        "changed": false,
+                        "diff": {
+                            "after": {
+                                "path": "/runner/.ssh",
+                                "state": "directory"
+                            },
+                            "before": {
+                                "path": "/runner/.ssh",
+                                "state": "absent"
+                            }
+                        },
+                        "gid": 0,
+                        "group": "root",
+                        "invocation": {
+                            "module_args": {
+                                "_diff_peek": null,
+                                "_original_basename": null,
+                                "access_time": null,
+                                "access_time_format": "%Y%m%d%H%M.%S",
+                                "attributes": null,
+                                "follow": true,
+                                "force": false,
+                                "group": null,
+                                "mode": "0755",
+                                "modification_time": null,
+                                "modification_time_format": "%Y%m%d%H%M.%S",
+                                "owner": null,
+                                "path": "/runner/.ssh",
+                                "recurse": false,
+                                "selevel": null,
+                                "serole": null,
+                                "setype": null,
+                                "seuser": null,
+                                "src": null,
+                                "state": "directory",
+                                "unsafe_writes": false
+                            }
+                        },
+                        "mode": "0755",
+                        "owner": "501",
+                        "path": "/runner/.ssh",
+                        "size": 64,
+                        "state": "directory",
+                        "uid": 501
+                    },
+                    "resolved_action": "ansible.builtin.file",
+                    "resolved_role": "curso.coleccion.knownhosts",
+                    "role": "knownhosts",
+                    "start": "2025-04-11T17:05:40.005128+00:00",
+                    "task": "Asegurar que existe la carpeta .ssh",
+                    "task_action": "ansible.builtin.file",
+                    "task_args": "",
+                    "task_path": "/usr/share/ansible/collections/ansible_collections/curso/coleccion/roles/knownhosts/tasks/main.yml:42",
+                    "task_uuid": "0242ac11-0002-51f4-7100-00000000002a",
+                    "uuid": "07edba92-1821-46f3-999f-96387590b953"
+                },
+                {
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__host": "remoto",
+                    "__number": 6,
+                    "__result": "Failed",
+                    "__task": "Asegurar que existe el archivo known_hosts en el entorno local",
+                    "__task_action": "ansible.builtin.file",
+                    "duration": 0.379829,
+                    "end": "2025-04-11T17:05:41.020770+00:00",
+                    "event_loop": null,
+                    "host": "remoto",
+                    "ignore_errors": null,
+                    "play": "remoto",
+                    "play_pattern": "remoto",
+                    "play_uuid": "0242ac11-0002-51f4-7100-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "4130c755-d03d-4e3f-a59d-286141da4b8a",
+                    "remote_addr": "remoto",
+                    "res": {
+                        "_ansible_delegated_vars": {
+                            "ansible_connection": "local",
+                            "ansible_host": "localhost",
+                            "ansible_port": null,
+                            "ansible_user": null
+                        },
+                        "_ansible_no_log": false,
+                        "changed": false,
+                        "invocation": {
+                            "module_args": {
+                                "_diff_peek": null,
+                                "_original_basename": null,
+                                "access_time": null,
+                                "access_time_format": "%Y%m%d%H%M.%S",
+                                "attributes": null,
+                                "follow": true,
+                                "force": false,
+                                "group": null,
+                                "mode": "0644",
+                                "modification_time": null,
+                                "modification_time_format": "%Y%m%d%H%M.%S",
+                                "owner": null,
+                                "path": "/runner/.ssh/known_hosts",
+                                "recurse": false,
+                                "selevel": null,
+                                "serole": null,
+                                "setype": null,
+                                "seuser": null,
+                                "src": null,
+                                "state": "file",
+                                "unsafe_writes": false
+                            }
+                        },
+                        "msg": "file (/runner/.ssh/known_hosts) is absent, cannot continue",
+                        "path": "/runner/.ssh/known_hosts",
+                        "state": "absent"
+                    },
+                    "resolved_action": "ansible.builtin.file",
+                    "resolved_role": "curso.coleccion.knownhosts",
+                    "role": "knownhosts",
+                    "start": "2025-04-11T17:05:40.640941+00:00",
+                    "task": "Asegurar que existe el archivo known_hosts en el entorno local",
+                    "task_action": "ansible.builtin.file",
+                    "task_args": "",
+                    "task_path": "/usr/share/ansible/collections/ansible_collections/curso/coleccion/roles/knownhosts/tasks/main.yml:52",
+                    "task_uuid": "0242ac11-0002-51f4-7100-00000000002b",
+                    "uuid": "79bcb9ad-3713-43d0-9f6d-d95513c84ad1"
+                }
+            ],
+            "uuid": "0242ac11-0002-51f4-7100-000000000002"
+        }
+    ],
+    "settings_entries": {
+        "ansible-navigator": {
+            "ansible": {
+                "config": {
+                    "help": false,
+                    "path": "./ansible.cfg"
+                },
+                "doc": {
+                    "help": false,
+                    "plugin": {
+                        "type": "module"
+                    }
+                },
+                "inventory": {
+                    "entries": [
+                        "/Users/ivan/formacionAU374/proyectos/playbooks/principal/inventario.ini"
+                    ],
+                    "help": false
+                },
+                "playbook": {
+                    "help": false,
+                    "path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml"
+                }
+            },
+            "ansible-builder": {
+                "help": false,
+                "workdir": "/Users/ivan/formacionAU374/proyectos/playbooks/principal"
+            },
+            "ansible-runner": {
+                "job-events": false
+            },
+            "app": "run",
+            "collection-doc-cache-path": "/Users/ivan/.cache/ansible-navigator/collection_doc_cache.db",
+            "color": {
+                "enable": true,
+                "osc4": true
+            },
+            "editor": {
+                "command": "vi +{line_number} {filename}",
+                "console": true
+            },
+            "enable-prompts": false,
+            "exec": {
+                "command": "/bin/bash",
+                "shell": true
+            },
+            "execution-environment": {
+                "container-engine": "docker",
+                "enabled": true,
+                "image": "curso-builder:latest",
+                "pull": {
+                    "policy": "tag"
+                }
+            },
+            "format": "yaml",
+            "images": {
+                "details": [
+                    "everything"
+                ]
+            },
+            "logging": {
+                "append": true,
+                "file": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/ansible-navigator.log",
+                "level": "warning"
+            },
+            "mode": "interactive",
+            "playbook-artifact": {
+                "enable": true,
+                "save-as": "{playbook_dir}/{playbook_name}-artifact-{time_stamp}.json"
+            },
+            "settings": {
+                "effective": false,
+                "sample": false,
+                "schema": "json",
+                "sources": false
+            },
+            "time-zone": "UTC"
+        }
+    },
+    "settings_sources": {
+        "ansible-navigator.ansible-builder.help": "Defaults",
+        "ansible-navigator.ansible-builder.workdir": "Defaults",
+        "ansible-navigator.ansible-lint.config": "Not set",
+        "ansible-navigator.ansible-lint.lintables": "Not set",
+        "ansible-navigator.ansible-runner.artifact-dir": "Not set",
+        "ansible-navigator.ansible-runner.job-events": "Defaults",
+        "ansible-navigator.ansible-runner.rotate-artifacts-count": "Not set",
+        "ansible-navigator.ansible-runner.timeout": "Not set",
+        "ansible-navigator.ansible.cmdline": "Not set",
+        "ansible-navigator.ansible.config.help": "Settings file",
+        "ansible-navigator.ansible.config.path": "Settings file",
+        "ansible-navigator.ansible.doc.help": "Defaults",
+        "ansible-navigator.ansible.doc.plugin.name": "Not set",
+        "ansible-navigator.ansible.doc.plugin.type": "Defaults",
+        "ansible-navigator.ansible.inventory.entries": "Settings file",
+        "ansible-navigator.ansible.inventory.help": "Defaults",
+        "ansible-navigator.ansible.playbook.help": "Defaults",
+        "ansible-navigator.ansible.playbook.path": "Settings file",
+        "ansible-navigator.app": "Command line",
+        "ansible-navigator.collection-doc-cache-path": "Defaults",
+        "ansible-navigator.color.enable": "Defaults",
+        "ansible-navigator.color.osc4": "Defaults",
+        "ansible-navigator.editor.command": "Defaults",
+        "ansible-navigator.editor.console": "Defaults",
+        "ansible-navigator.enable-prompts": "Defaults",
+        "ansible-navigator.exec.command": "Defaults",
+        "ansible-navigator.exec.shell": "Defaults",
+        "ansible-navigator.execution-environment.container-engine": "Automatically determined",
+        "ansible-navigator.execution-environment.container-options": "Not set",
+        "ansible-navigator.execution-environment.enabled": "Settings file",
+        "ansible-navigator.execution-environment.environment-variables.pass": "Not set",
+        "ansible-navigator.execution-environment.environment-variables.set": "Not set",
+        "ansible-navigator.execution-environment.image": "Settings file",
+        "ansible-navigator.execution-environment.pull.arguments": "Not set",
+        "ansible-navigator.execution-environment.pull.policy": "Defaults",
+        "ansible-navigator.execution-environment.volume-mounts": "Not set",
+        "ansible-navigator.format": "Defaults",
+        "ansible-navigator.images.details": "Defaults",
+        "ansible-navigator.inventory-columns": "Not set",
+        "ansible-navigator.logging.append": "Defaults",
+        "ansible-navigator.logging.file": "Defaults",
+        "ansible-navigator.logging.level": "Defaults",
+        "ansible-navigator.mode": "Defaults",
+        "ansible-navigator.playbook-artifact.enable": "Defaults",
+        "ansible-navigator.playbook-artifact.replay": "Not set",
+        "ansible-navigator.playbook-artifact.save-as": "Defaults",
+        "ansible-navigator.settings.effective": "Defaults",
+        "ansible-navigator.settings.sample": "Defaults",
+        "ansible-navigator.settings.schema": "Defaults",
+        "ansible-navigator.settings.sources": "Defaults",
+        "ansible-navigator.time-zone": "Defaults",
+        "settings_file_path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/ansible-navigator.yaml",
+        "settings_file_source": "Search path"
+    },
+    "status": "failed",
+    "status_color": 9,
+    "stdout": [
+        "",
+        "PLAY [remoto] ******************************************************************",
+        "",
+        "TASK [Asegurarnos que tenemos registrado ese host en el known_hosts] ***********",
+        "",
+        "TASK [curso.coleccion.knownhosts : Aplico los valores por defecto a los datos no suministrados] ***",
+        "\u001b[0;32mok: [remoto]\u001b[0m",
+        "",
+        "TASK [curso.coleccion.knownhosts : Extraemos el algoritmo a usar] **************",
+        "\u001b[0;32mok: [remoto]\u001b[0m",
+        "",
+        "TASK [curso.coleccion.knownhosts : Asegurar que se ha suministrado un valor correcto en knownHosts.new.limitedTo] ***",
+        "\u001b[0;32mok: [remoto]\u001b[0m",
+        "",
+        "TASK [curso.coleccion.knownhosts : Asegurar que se ha suministrado un valor correcto en knownHosts.updated.limitedTo] ***",
+        "\u001b[0;32mok: [remoto]\u001b[0m",
+        "",
+        "TASK [curso.coleccion.knownhosts : Asegurar que existe la carpeta .ssh] ********",
+        "\u001b[0;32mok: [remoto -> localhost]\u001b[0m",
+        "",
+        "TASK [curso.coleccion.knownhosts : Asegurar que existe el archivo known_hosts en el entorno local] ***",
+        "\u001b[0;31mfatal: [remoto -> localhost]: FAILED! => {\"changed\": false, \"msg\": \"file (/runner/.ssh/known_hosts) is absent, cannot continue\", \"path\": \"/runner/.ssh/known_hosts\", \"state\": \"absent\"}\u001b[0m",
+        "",
+        "NO MORE HOSTS LEFT *************************************************************",
+        "",
+        "PLAY RECAP *********************************************************************",
+        "\u001b[0;31mremoto\u001b[0m                     : \u001b[0;32mok=5   \u001b[0m changed=0    unreachable=0    \u001b[0;31mfailed=1   \u001b[0m skipped=0    rescued=0    ignored=0   "
+    ],
+    "version": "2.0.0"
+}

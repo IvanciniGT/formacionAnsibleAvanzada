@@ -4,7 +4,7 @@
   tasks:
     - name:          Asegurarnos que tenemos registrado ese host en el known_hosts
       include_role:
-        name:       knownhosts
+        name:       curso.coleccion.knownhosts
       vars:
           knownHostsFile:
               algorithm:                  ecdsa
@@ -23,7 +23,7 @@
 
     - name:          Asegurarnos que tenemos registrado ese host en el known_hosts
       include_role:
-        name:       keypairgen
+        name:       curso.coleccion.keypairgen
       vars:
           sshKeyPairs:
               keyPairs:
@@ -39,7 +39,7 @@
 
     - name:          Añadir la nueva clave ssh en el tower
       include_role:
-        name:       credentials
+        name:       curso.coleccion.credentials
       vars:
         ansibleCrendential:
           organizationName:   Default

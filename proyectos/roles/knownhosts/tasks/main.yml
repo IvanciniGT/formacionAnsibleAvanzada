@@ -39,6 +39,17 @@
     tags:
         - always
 
+-   name:                   Asegurar que existe la carpeta .ssh
+    ansible.builtin.file:
+        path:               ~/.ssh
+        mode:               '0755'
+        state:              'directory'
+    delegate_to:            localhost
+    run_once:               true
+    changed_when:           false
+    tags:
+            - knownhosts
+
 -   name:                   Asegurar que existe el archivo known_hosts en el entorno local
     ansible.builtin.file:
         path:               ~/.ssh/known_hosts

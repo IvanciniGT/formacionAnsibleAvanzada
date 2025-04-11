@@ -1,0 +1,11 @@
+collections:
+  - name: community.crypto
+    version: ">=2.26.0"
+    source: https://galaxy.ansible.com
+  - name: https://github.com/IvanciniGT/coleccion1.git
+    type: git
+    version: master
+
+#roles:
+#  - name: knownhosts
+#    src:  https://github.com/IvanciniGT/role1.git

@@ -1,59 +1,50 @@
 {
     "plays": [
         {
-            "___progress": "100%",
-            "__changed": 0,
-            "__failed": 0,
-            "__ignored": 0,
-            "__in progress": 0,
-            "__ok": 0,
-            "__percent_complete": 100,
             "__play_name": "remoto",
-            "__progress": "Complete",
-            "__skipped": 0,
-            "__task_count": 1,
-            "__unreachable": 1,
             "name": "remoto",
             "pattern": "remoto",
             "play": "remoto",
             "play_pattern": "remoto",
-            "play_uuid": "0242ac11-0002-d03a-8191-000000000002",
-            "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playboo0.yaml",
-            "playbook_uuid": "b4d34285-fe33-4327-9565-c2c33a214d1b",
+            "play_uuid": "0242ac11-0002-006e-3f98-000000000002",
+            "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+            "playbook_uuid": "7df85bab-65c0-4654-89aa-1975a2eae208",
             "tasks": [
                 {
                     "__changed": false,
                     "__duration": "0s",
                     "__host": "remoto",
                     "__number": 0,
-                    "__result": "Unreachable",
+                    "__result": "Ok",
                     "__task": "Asegurarnos que tenemos registrado ese host en el known_hosts",
-                    "__task_action": "shell",
-                    "duration": 0.321377,
-                    "end": "2025-04-11T14:31:32.898743+00:00",
+                    "__task_action": "include_role",
+                    "duration": 0.018181,
+                    "end": "2025-04-11T16:29:27.524388+00:00",
+                    "event_loop": null,
                     "host": "remoto",
                     "play": "remoto",
                     "play_pattern": "remoto",
-                    "play_uuid": "0242ac11-0002-d03a-8191-000000000002",
-                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playboo0.yaml",
-                    "playbook_uuid": "b4d34285-fe33-4327-9565-c2c33a214d1b",
+                    "play_uuid": "0242ac11-0002-006e-3f98-000000000002",
+                    "playbook": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml",
+                    "playbook_uuid": "7df85bab-65c0-4654-89aa-1975a2eae208",
                     "remote_addr": "remoto",
                     "res": {
                         "changed": false,
-                        "msg": "Failed to connect to the host via ssh: root@54.75.98.186: Permission denied (publickey,password).",
-                        "unreachable": true
+                        "include_args": {
+                            "name": "knownhosts"
+                        }
                     },
-                    "resolved_action": "ansible.builtin.shell",
-                    "start": "2025-04-11T14:31:32.577366+00:00",
+                    "resolved_action": null,
+                    "start": "2025-04-11T16:29:27.506207+00:00",
                     "task": "Asegurarnos que tenemos registrado ese host en el known_hosts",
-                    "task_action": "shell",
+                    "task_action": "include_role",
                     "task_args": "",
-                    "task_path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playboo0.yaml:5",
-                    "task_uuid": "0242ac11-0002-d03a-8191-000000000004",
-                    "uuid": "77a9be54-0821-43ad-8a85-8bc3dfd36246"
+                    "task_path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml:5",
+                    "task_uuid": "0242ac11-0002-006e-3f98-000000000004",
+                    "uuid": "8199aeec-8fea-4616-873a-2d6ead95c763"
                 }
             ],
-            "uuid": "0242ac11-0002-d03a-8191-000000000002"
+            "uuid": "0242ac11-0002-006e-3f98-000000000002"
         }
     ],
     "settings_entries": {
@@ -76,7 +67,7 @@
                 },
                 "playbook": {
                     "help": false,
-                    "path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playboo0.yaml"
+                    "path": "/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml"
                 }
             },
             "ansible-builder": {
@@ -104,7 +95,7 @@
             "execution-environment": {
                 "container-engine": "docker",
                 "enabled": true,
-                "image": "curso-roles:latest",
+                "image": "curso-builder:latest",
                 "pull": {
                     "policy": "tag"
                 }
@@ -152,7 +143,7 @@
         "ansible-navigator.ansible.inventory.entries": "Settings file",
         "ansible-navigator.ansible.inventory.help": "Defaults",
         "ansible-navigator.ansible.playbook.help": "Defaults",
-        "ansible-navigator.ansible.playbook.path": "Previous cli command",
+        "ansible-navigator.ansible.playbook.path": "Settings file",
         "ansible-navigator.app": "Command line",
         "ansible-navigator.collection-doc-cache-path": "Defaults",
         "ansible-navigator.color.enable": "Defaults",
@@ -196,10 +187,18 @@
         "PLAY [remoto] ******************************************************************",
         "",
         "TASK [Asegurarnos que tenemos registrado ese host en el known_hosts] ***********",
-        "\u001b[1;31mfatal: [remoto]: UNREACHABLE! => {\"changed\": false, \"msg\": \"Failed to connect to the host via ssh: root@54.75.98.186: Permission denied (publickey,password).\", \"unreachable\": true}\u001b[0m",
+        "\u001b[0;31mERROR! the role 'knownhosts' was not found in /Users/ivan/formacionAU374/proyectos/playbooks/principal/roles:/Users/ivan/formacionAU374/proyectos/roles:/Users/ivan/formacionAU374/proyectos/playbooks/principal\u001b[0m",
+        "\u001b[0;31m\u001b[0m",
+        "\u001b[0;31mThe error appears to be in '/Users/ivan/formacionAU374/proyectos/playbooks/principal/playbook.yaml': line 7, column 21, but may\u001b[0m",
+        "\u001b[0;31mbe elsewhere in the file depending on the exact syntax problem.\u001b[0m",
+        "\u001b[0;31m\u001b[0m",
+        "\u001b[0;31mThe offending line appears to be:\u001b[0m",
+        "\u001b[0;31m\u001b[0m",
+        "\u001b[0;31m      include_role:\u001b[0m",
+        "\u001b[0;31m        name:       knownhosts\u001b[0m",
+        "\u001b[0;31m                    ^ here\u001b[0m",
         "",
-        "PLAY RECAP *********************************************************************",
-        "\u001b[0;31mremoto\u001b[0m                     : ok=0    changed=0    \u001b[1;31munreachable=1   \u001b[0m failed=0    skipped=0    rescued=0    ignored=0   "
+        "PLAY RECAP *********************************************************************"
     ],
     "version": "2.0.0"
 }

@@ -2,6 +2,9 @@
 
 ansible-navigator:
   ansible:
+    config:
+       help: False
+       path: ./ansible.cfg
     inventory: 
       entries:
       -                   inventario.ini
@@ -12,7 +15,7 @@ ansible-navigator:
   execution-environment:
     container-engine:     auto
     enabled:              true
-    image:                "curso-roles:latest"
-    environment-variables:
-      set:
-        ANSIBLE_ROLES_PATH: "/roles"
+    image:                "curso-builder:latest"
+    #environment-variables:
+    #  set:
+    #    ANSIBLE_ROLES_PATH: "/roles"
